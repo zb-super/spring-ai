@@ -17,6 +17,7 @@
 	</developers>
 	<modules>
 		<module>spring-ai-reactor</module>
+		<module>spring-ai-agent</module>
 	</modules>
 	<scm>
 		<connection/>
@@ -29,7 +30,6 @@
 		<spring-ai.version>1.0.0-M8</spring-ai.version>
 		<mybatis.version>3.0.4</mybatis.version>
 		<spring-boot.version>3.4.5</spring-boot.version>
-
 	</properties>
 	<dependencies>
 		<dependency>
