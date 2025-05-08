@@ -48,8 +48,10 @@ public class ExecutorDemo {
                         }
                     }
                     sink.complete();
-                }).doOnRequest(x -> System.out.println("..." + Thread.currentThread().getName()))
-                .subscribeOn(Schedulers.boundedElastic())
+                })
+                .log()
+                .doOnRequest(x -> System.out.println("..." + Thread.currentThread().getName()))
+                .subscribeOn(Schedulers.boundedElastic(), false)
                 .publishOn(MyScheduler(), 4)
                 .map(x -> String.format("[%s] %s", Thread.currentThread().getName(), "消费了元素"))
                 .subscribe(item ->{
