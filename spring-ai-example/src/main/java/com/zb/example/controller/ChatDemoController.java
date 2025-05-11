@@ -1,5 +1,6 @@
 package com.zb.example.controller;
 
+import com.zb.example.tool.TestUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,10 +23,11 @@ public class ChatDemoController {
         this.chatClient = chatClientBuilder.build();
     }
 
-    @GetMapping("/ai")
+    @GetMapping(value = "/ai")
     Flux<String> generation(@RequestParam("userInput") String userInput) {
         return this.chatClient.prompt()
                 .user(userInput)
+                .tools(new TestUtils())
                 .stream()
                 .content();
     }
