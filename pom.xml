@@ -18,7 +18,8 @@
 	<modules>
 		<module>spring-ai-reactor</module>
 		<module>spring-ai-agent</module>
-	</modules>
+        <module>spring-ai-example</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
