@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.bz</groupId>
 	<artifactId>spring-ai-bz</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 	<name>spring-ai-bz</name>
 	<description>agent rag reactor</description>
@@ -31,6 +31,7 @@
 		<spring-ai.version>1.0.0-M8</spring-ai.version>
 		<mybatis.version>3.0.4</mybatis.version>
 		<spring-boot.version>3.4.5</spring-boot.version>
+		<revision>0.0.1</revision>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -89,18 +90,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

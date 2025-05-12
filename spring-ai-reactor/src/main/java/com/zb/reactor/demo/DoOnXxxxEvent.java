@@ -35,7 +35,6 @@ public class DoOnXxxxEvent {
                     System.out.println("doOnComplete");
                 })
                 .doOnSubscribe(item -> {
-
                     System.out.println("doOnSubscribe ===>" + item.toString());
                 });
 

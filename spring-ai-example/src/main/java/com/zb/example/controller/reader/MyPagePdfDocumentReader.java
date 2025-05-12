@@ -1,4 +1,4 @@
-package com.zb.example.reader;
+package com.zb.example.controller.reader;
 
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.ExtractedTextFormatter;

@@ -1,4 +1,4 @@
-package com.zb.event;
+package com.zb.agent.event;
 
 /**
  * Description
@@ -8,6 +8,4 @@ package com.zb.event;
  * @date： 2025/5/12
  */
 public interface MsgEventHandle {
-
-    public void sendMsg(Object msg);
 }
