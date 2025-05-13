@@ -33,6 +33,12 @@
             <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.bz</groupId>
+            <artifactId>spring-ai-common</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.alibaba.cloud.ai</groupId>-->
 <!--            <artifactId>spring-ai-alibaba-starter</artifactId>-->
