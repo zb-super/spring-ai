@@ -1,12 +1,14 @@
 package com.bz.example.vavr;
 
 
+import io.vavr.Lazy;
 import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.collection.Queue;
 import io.vavr.collection.Stream;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +17,7 @@ public class VavrDemo {
 
     public static void main(String[] args) {
 
-        VavrDemo.testStream();
+        VavrDemo.testTry();
     }
 
     private void testList(){
@@ -50,6 +52,17 @@ public class VavrDemo {
 
     private void testTuple(){
 //        Tuple.
+
+
+
+    }
+
+    private static void testTry(){
+        Try.of(() -> 1/0)
+                .onFailure(ex -> System.out.println(ex.getMessage()))
+
+                .get();
+
     }
 
 }

@@ -17,5 +17,10 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.bz</groupId>
+            <artifactId>spring-ai-common</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 </project>
