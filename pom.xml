@@ -32,12 +32,17 @@
 		<mybatis.version>3.0.4</mybatis.version>
 		<spring-boot.version>3.4.5</spring-boot.version>
 		<revision>0.0.1</revision>
+		<vavr.version>0.10.6</vavr.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.boot</groupId>-->
@@ -84,6 +89,11 @@
 				<version>2024.0.5</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.vavr</groupId>
+				<artifactId>vavr</artifactId>
+				<version>0.10.6</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

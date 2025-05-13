@@ -1,6 +1,6 @@
 package com.zb.agent;
 
-import com.zb.agent.model.AgentMsgModel;
+import com.zb.agent.model.AgentMsg;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
 import reactor.core.publisher.Flux;
@@ -14,5 +14,5 @@ import reactor.core.publisher.Flux;
  */
 public interface AgentService {
 
-    public Flux<AgentMsgModel> startTask(String query, ChatModel chatModel, ToolCallback[] callbacks);
+    public Flux<AgentMsg> startTask(String query, ChatModel chatModel, ToolCallback[] callbacks);
 }
