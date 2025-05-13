@@ -33,6 +33,7 @@
 		<spring-boot.version>3.4.5</spring-boot.version>
 		<revision>0.0.1</revision>
 		<vavr.version>0.10.6</vavr.version>
+		<maven.version>3.14.0</maven.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -111,6 +112,15 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 		</plugins>
