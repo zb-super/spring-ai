@@ -4,6 +4,7 @@ import io.vavr.Tuple;
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 
 public class VavrDemo {
 
@@ -11,5 +12,6 @@ public class VavrDemo {
         List<String> append = List.of("1").append("2");
         Tuple2<Integer, Integer> integerIntegerTuple2 = Tuple.of(1, 2);
         Option.of(null);
+//        Try.of()
     }
 }
