@@ -1,9 +1,9 @@
 package com.zb.agent;
 
-import com.zb.agent.event.MsgEventHandle;
-import com.zb.agent.model.UserInput;
+import com.zb.agent.model.AgentMsgModel;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
+import reactor.core.publisher.Flux;
 
 /**
  * Description
@@ -14,5 +14,5 @@ import org.springframework.ai.tool.ToolCallback;
  */
 public interface AgentService {
 
-    public void startTask(String query, ChatModel chatModel, ToolCallback[] callbacks, MsgEventHandle eventHandle);
+    public Flux<AgentMsgModel> startTask(String query, ChatModel chatModel, ToolCallback[] callbacks);
 }
