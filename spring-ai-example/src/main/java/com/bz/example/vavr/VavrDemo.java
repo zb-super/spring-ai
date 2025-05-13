@@ -1,4 +1,4 @@
-package com.bz.example.controller.vavr;
+package com.bz.example.vavr;
 
 import io.vavr.Tuple;
 import io.vavr.Tuple2;

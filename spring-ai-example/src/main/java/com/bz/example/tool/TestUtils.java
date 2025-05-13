@@ -1,4 +1,4 @@
-package com.bz.example.controller.tool;
+package com.bz.example.tool;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;

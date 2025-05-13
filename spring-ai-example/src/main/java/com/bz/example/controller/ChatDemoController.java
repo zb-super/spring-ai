@@ -1,6 +1,6 @@
 package com.bz.example.controller;
 
-import com.bz.example.controller.tool.TestUtils;
+import com.bz.example.tool.TestUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
