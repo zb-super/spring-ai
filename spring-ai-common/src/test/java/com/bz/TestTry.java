@@ -6,14 +6,13 @@ public class TestTry {
     public static void main(String[] args) {
         Try.of(() -> 1/0)
                 .onFailure(throwable -> {
-
+                    // dou some thing
                 })
                 .onSuccess(val -> {
-
+                    // dou some thing
                 })
-                .andFinally(() -> System.out.println("c出错了"))
-                .get();
-
-
+                .andFinally(() -> {
+                    System.out.println("finally");
+                }).get();
     }
 }
