@@ -1,4 +1,4 @@
-package com.bz.common.agent.model;
+package com.bz.agent.model;
 
 public enum AgentMsgType {
 

@@ -1,6 +1,6 @@
-package com.bz.common.agent;
+package com.bz.agent;
 
-import com.bz.common.agent.model.AgentMsg;
+import com.bz.agent.model.AgentMsg;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallback;
 import reactor.core.publisher.Flux;

@@ -1,4 +1,4 @@
-package com.bz.common.agent.event;
+package com.bz.agent.event;
 
 /**
  * Description
@@ -7,5 +7,5 @@ package com.bz.common.agent.event;
  * @author：binzhang
  * @date： 2025/5/12
  */
-public interface MsgEventHandle {
+public class FluxMsgHandle implements MsgEventHandle {
 }

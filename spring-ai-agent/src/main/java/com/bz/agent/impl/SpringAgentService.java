@@ -1,8 +1,8 @@
-package com.bz.common.agent.impl;
+package com.bz.agent.impl;
 
-import com.bz.common.agent.AgentService;
-import com.bz.common.agent.model.AgentMsg;
-import com.bz.common.agent.model.AgentMsgType;
+import com.bz.agent.AgentService;
+import com.bz.agent.model.AgentMsg;
+import com.bz.agent.model.AgentMsgType;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
