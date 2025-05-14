@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Main-Class: com.bz.Application
+Main-Class: com.bz.common.Application
 Class-Path: logback-core-1.5.18.jar spring-boot-3.4.5.jar jsonschema-mod
  ule-jackson-4.37.0.jar HdrHistogram-2.2.2.jar spring-boot-autoconfigure
  -3.4.5.jar fontbox-3.0.3.jar spring-ai-retry-1.0.0-M8.jar jackson-modul
