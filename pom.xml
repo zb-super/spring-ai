@@ -20,7 +20,8 @@
 		<module>spring-ai-agent</module>
         <module>spring-ai-example</module>
 		<module>spring-ai-common</module>
-	</modules>
+        <module>spring-ai-openai-inference</module>
+    </modules>
 	<scm>
 		<connection/>
 		<developerConnection/>
