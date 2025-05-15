@@ -9,10 +9,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AgentMsg {
+public class AgentChatResponse {
 
     private Object data;
 
-    private AgentMsgType type;
+    private Type type;
+
+    public enum Type {
+        THINK,
+        TOOL,
+        TEXT
+    }
 
 }
