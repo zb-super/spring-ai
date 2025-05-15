@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ai.openai.metadata;
+package org.springframework.ai.openai.inference.metadata;
 
 import org.springframework.ai.chat.metadata.RateLimit;
 

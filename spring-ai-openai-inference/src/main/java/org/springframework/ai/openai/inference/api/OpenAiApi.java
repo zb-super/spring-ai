@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.springframework.ai.openai.api;
+package org.springframework.ai.openai.inference.api;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.springframework.ai.model.*;
-import org.springframework.ai.openai.api.common.OpenAiApiConstants;
+import org.springframework.ai.openai.inference.api.common.OpenAiApiConstants;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.springframework.ai.openai.metadata.support;
+package org.springframework.ai.openai.inference.metadata.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.metadata.RateLimit;
-import org.springframework.ai.openai.metadata.OpenAiRateLimit;
+import org.springframework.ai.openai.inference.metadata.OpenAiRateLimit;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.springframework.ai.openai.metadata.support.OpenAiApiResponseHeaders.*;
+import static org.springframework.ai.openai.inference.metadata.support.OpenAiApiResponseHeaders.*;
 
 /**
  * Utility used to extract known HTTP response headers for the {@literal OpenAI} API.

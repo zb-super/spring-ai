@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ai.openai;
+package org.springframework.ai.openai.inference;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,12 +22,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest.AudioParameters;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest.StreamOptions;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest.ToolChoiceBuilder;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest.WebSearchOptions;
-import org.springframework.ai.openai.api.ResponseFormat;
+import org.springframework.ai.openai.inference.api.OpenAiApi;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.AudioParameters;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.StreamOptions;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.ToolChoiceBuilder;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.WebSearchOptions;
+import org.springframework.ai.openai.inference.api.ResponseFormat;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;

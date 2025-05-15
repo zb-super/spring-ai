@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.ai.openai;
+package org.springframework.ai.openai.inference;
 
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -36,17 +36,17 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.model.tool.*;
-import org.springframework.ai.openai.api.OpenAiApi;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletion;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletion.Choice;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.AudioOutput;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.ChatCompletionFunction;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.MediaContent;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.ToolCall;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest;
-import org.springframework.ai.openai.api.common.OpenAiApiConstants;
-import org.springframework.ai.openai.metadata.support.OpenAiResponseHeaderExtractor;
+import org.springframework.ai.openai.inference.api.OpenAiApi;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletion;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletion.Choice;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.AudioOutput;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.ChatCompletionFunction;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.MediaContent;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.ToolCall;
+import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest;
+import org.springframework.ai.openai.inference.api.common.OpenAiApiConstants;
+import org.springframework.ai.openai.inference.metadata.support.OpenAiResponseHeaderExtractor;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.support.UsageCalculator;
 import org.springframework.ai.tool.definition.ToolDefinition;

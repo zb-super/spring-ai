@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package org.springframework.ai.openai.api;
+package org.springframework.ai.openai.inference.api;
 
-import org.springframework.ai.openai.api.OpenAiApi.*;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletion.Choice;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionChunk.ChunkChoice;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.ChatCompletionFunction;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.Role;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionMessage.ToolCall;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -46,7 +40,7 @@ public class OpenAiStreamFunctionCallingHelper {
 	 * @param current the current ChatCompletionChunk
 	 * @return the merged ChatCompletionChunk
 	 */
-	public ChatCompletionChunk merge(ChatCompletionChunk previous, ChatCompletionChunk current) {
+	public OpenAiApi.ChatCompletionChunk merge(OpenAiApi.ChatCompletionChunk previous, OpenAiApi.ChatCompletionChunk current) {
 
 		if (previous == null) {
 			return current;
@@ -59,46 +53,46 @@ public class OpenAiStreamFunctionCallingHelper {
 		String systemFingerprint = (current.systemFingerprint() != null ? current.systemFingerprint()
 				: previous.systemFingerprint());
 		String object = (current.object() != null ? current.object() : previous.object());
-		Usage usage = (current.usage() != null ? current.usage() : previous.usage());
+		OpenAiApi.Usage usage = (current.usage() != null ? current.usage() : previous.usage());
 
-		ChunkChoice previousChoice0 = (CollectionUtils.isEmpty(previous.choices()) ? null : previous.choices().get(0));
-		ChunkChoice currentChoice0 = (CollectionUtils.isEmpty(current.choices()) ? null : current.choices().get(0));
+		OpenAiApi.ChatCompletionChunk.ChunkChoice previousChoice0 = (CollectionUtils.isEmpty(previous.choices()) ? null : previous.choices().get(0));
+		OpenAiApi.ChatCompletionChunk.ChunkChoice currentChoice0 = (CollectionUtils.isEmpty(current.choices()) ? null : current.choices().get(0));
 
-		ChunkChoice choice = merge(previousChoice0, currentChoice0);
-		List<ChunkChoice> chunkChoices = choice == null ? List.of() : List.of(choice);
-		return new ChatCompletionChunk(id, chunkChoices, created, model, serviceTier, systemFingerprint, object, usage);
+		OpenAiApi.ChatCompletionChunk.ChunkChoice choice = merge(previousChoice0, currentChoice0);
+		List<OpenAiApi.ChatCompletionChunk.ChunkChoice> chunkChoices = choice == null ? List.of() : List.of(choice);
+		return new OpenAiApi.ChatCompletionChunk(id, chunkChoices, created, model, serviceTier, systemFingerprint, object, usage);
 	}
 
-	private ChunkChoice merge(ChunkChoice previous, ChunkChoice current) {
+	private OpenAiApi.ChatCompletionChunk.ChunkChoice merge(OpenAiApi.ChatCompletionChunk.ChunkChoice previous, OpenAiApi.ChatCompletionChunk.ChunkChoice current) {
 		if (previous == null) {
 			return current;
 		}
 
-		ChatCompletionFinishReason finishReason = (current.finishReason() != null ? current.finishReason()
+		OpenAiApi.ChatCompletionFinishReason finishReason = (current.finishReason() != null ? current.finishReason()
 				: previous.finishReason());
 		Integer index = (current.index() != null ? current.index() : previous.index());
 
-		ChatCompletionMessage message = merge(previous.delta(), current.delta());
+		OpenAiApi.ChatCompletionMessage message = merge(previous.delta(), current.delta());
 
-		LogProbs logprobs = (current.logprobs() != null ? current.logprobs() : previous.logprobs());
-		return new ChunkChoice(finishReason, index, message, logprobs);
+		OpenAiApi.LogProbs logprobs = (current.logprobs() != null ? current.logprobs() : previous.logprobs());
+		return new OpenAiApi.ChatCompletionChunk.ChunkChoice(finishReason, index, message, logprobs);
 	}
 
-	private ChatCompletionMessage merge(ChatCompletionMessage previous, ChatCompletionMessage current) {
+	private OpenAiApi.ChatCompletionMessage merge(OpenAiApi.ChatCompletionMessage previous, OpenAiApi.ChatCompletionMessage current) {
 		String content = (current.content() != null ? current.content()
 				: "" + ((previous.content() != null) ? previous.content() : ""));
-		Role role = (current.role() != null ? current.role() : previous.role());
-		role = (role != null ? role : Role.ASSISTANT); // default to ASSISTANT (if null
+		OpenAiApi.ChatCompletionMessage.Role role = (current.role() != null ? current.role() : previous.role());
+		role = (role != null ? role : OpenAiApi.ChatCompletionMessage.Role.ASSISTANT); // default to ASSISTANT (if null
 		String name = (current.name() != null ? current.name() : previous.name());
 		String toolCallId = (current.toolCallId() != null ? current.toolCallId() : previous.toolCallId());
 		String refusal = (current.refusal() != null ? current.refusal() : previous.refusal());
-		ChatCompletionMessage.AudioOutput audioOutput = (current.audioOutput() != null ? current.audioOutput()
+		OpenAiApi.ChatCompletionMessage.AudioOutput audioOutput = (current.audioOutput() != null ? current.audioOutput()
 				: previous.audioOutput());
-		List<ChatCompletionMessage.Annotation> annotations = (current.annotations() != null ? current.annotations()
+		List<OpenAiApi.ChatCompletionMessage.Annotation> annotations = (current.annotations() != null ? current.annotations()
 				: previous.annotations());
 
-		List<ToolCall> toolCalls = new ArrayList<>();
-		ToolCall lastPreviousTooCall = null;
+		List<OpenAiApi.ChatCompletionMessage.ToolCall> toolCalls = new ArrayList<>();
+		OpenAiApi.ChatCompletionMessage.ToolCall lastPreviousTooCall = null;
 		if (previous.toolCalls() != null) {
 			lastPreviousTooCall = previous.toolCalls().get(previous.toolCalls().size() - 1);
 			if (previous.toolCalls().size() > 1) {
@@ -125,20 +119,20 @@ public class OpenAiStreamFunctionCallingHelper {
 				toolCalls.add(lastPreviousTooCall);
 			}
 		}
-		return new ChatCompletionMessage(content, role, name, toolCallId, toolCalls, refusal, audioOutput, annotations);
+		return new OpenAiApi.ChatCompletionMessage(content, role, name, toolCallId, toolCalls, refusal, audioOutput, annotations);
 	}
 
-	private ToolCall merge(ToolCall previous, ToolCall current) {
+	private OpenAiApi.ChatCompletionMessage.ToolCall merge(OpenAiApi.ChatCompletionMessage.ToolCall previous, OpenAiApi.ChatCompletionMessage.ToolCall current) {
 		if (previous == null) {
 			return current;
 		}
 		String id = (StringUtils.hasText(current.id()) ? current.id() : previous.id());
 		String type = (current.type() != null ? current.type() : previous.type());
-		ChatCompletionFunction function = merge(previous.function(), current.function());
-		return new ToolCall(id, type, function);
+		OpenAiApi.ChatCompletionMessage.ChatCompletionFunction function = merge(previous.function(), current.function());
+		return new OpenAiApi.ChatCompletionMessage.ToolCall(id, type, function);
 	}
 
-	private ChatCompletionFunction merge(ChatCompletionFunction previous, ChatCompletionFunction current) {
+	private OpenAiApi.ChatCompletionMessage.ChatCompletionFunction merge(OpenAiApi.ChatCompletionMessage.ChatCompletionFunction previous, OpenAiApi.ChatCompletionMessage.ChatCompletionFunction current) {
 		if (previous == null) {
 			return current;
 		}
@@ -150,14 +144,14 @@ public class OpenAiStreamFunctionCallingHelper {
 		if (current.arguments() != null) {
 			arguments.append(current.arguments());
 		}
-		return new ChatCompletionFunction(name, arguments.toString());
+		return new OpenAiApi.ChatCompletionMessage.ChatCompletionFunction(name, arguments.toString());
 	}
 
 	/**
 	 * @param chatCompletion the ChatCompletionChunk to check
 	 * @return true if the ChatCompletionChunk is a streaming tool function call.
 	 */
-	public boolean isStreamingToolFunctionCall(ChatCompletionChunk chatCompletion) {
+	public boolean isStreamingToolFunctionCall(OpenAiApi.ChatCompletionChunk chatCompletion) {
 
 		if (chatCompletion == null || CollectionUtils.isEmpty(chatCompletion.choices())) {
 			return false;
@@ -175,7 +169,7 @@ public class OpenAiStreamFunctionCallingHelper {
 	 * @return true if the ChatCompletionChunk is a streaming tool function call and it is
 	 * the last one.
 	 */
-	public boolean isStreamingToolFunctionCallFinish(ChatCompletionChunk chatCompletion) {
+	public boolean isStreamingToolFunctionCallFinish(OpenAiApi.ChatCompletionChunk chatCompletion) {
 
 		if (chatCompletion == null || CollectionUtils.isEmpty(chatCompletion.choices())) {
 			return false;
@@ -185,7 +179,7 @@ public class OpenAiStreamFunctionCallingHelper {
 		if (choice == null || choice.delta() == null) {
 			return false;
 		}
-		return choice.finishReason() == ChatCompletionFinishReason.TOOL_CALLS;
+		return choice.finishReason() == OpenAiApi.ChatCompletionFinishReason.TOOL_CALLS;
 	}
 
 	/**
@@ -193,14 +187,14 @@ public class OpenAiStreamFunctionCallingHelper {
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
-	public ChatCompletion chunkToChatCompletion(ChatCompletionChunk chunk) {
-		List<Choice> choices = chunk.choices()
+	public OpenAiApi.ChatCompletion chunkToChatCompletion(OpenAiApi.ChatCompletionChunk chunk) {
+		List<OpenAiApi.ChatCompletion.Choice> choices = chunk.choices()
 			.stream()
-			.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
+			.map(chunkChoice -> new OpenAiApi.ChatCompletion.Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
 					chunkChoice.logprobs()))
 			.toList();
 
-		return new ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.serviceTier(),
+		return new OpenAiApi.ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.serviceTier(),
 				chunk.systemFingerprint(), "chat.completion", null);
 	}
 
