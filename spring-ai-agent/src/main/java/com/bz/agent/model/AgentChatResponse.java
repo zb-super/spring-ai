@@ -1,24 +1,29 @@
 package com.bz.agent.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public interface AgentChatResponse {
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AgentChatResponse {
+    Type getType();
 
-    private Object data;
-
-    private Type type;
-
-    public enum Type {
-        THINK,
-        TOOL,
-        TEXT
+    static AgentChatResponse ofThinkResponse(Object data){
+        return new ThinkChatResponse(data);
     }
 
+    static AgentChatResponse ofToolResponse(Object data){
+        return new ThinkChatResponse(data);
+    }
+
+    static AgentChatResponse ofTextResponse(Object data){
+        return new ThinkChatResponse(data);
+    }
+
+    static AgentChatResponse ofErrorResponse(Object data){
+        return new ThinkChatResponse(data);
+    }
+
+    enum Type {
+        THINK,
+        TOOL,
+        TEXT,
+        ERROR
+    }
 }

@@ -21,7 +21,7 @@ public class QwenExecutor extends AbstractAgentExecutor implements AgentExecutor
         Objects.requireNonNull(chatModel.stream(prompt)
                         .doOnNext(item -> {
                             String text = item.getResult().getOutput().getText();
-                            emitter.next(new AgentChatResponse(text, AgentChatResponse.Type.TEXT));
+//                            emitter.next(new AgentChatResponse(text, AgentChatResponse.Type.TEXT));
                         })
                         .collectList()
                         .block())
