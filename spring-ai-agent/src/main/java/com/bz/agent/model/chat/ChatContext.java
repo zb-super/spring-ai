@@ -1,5 +1,6 @@
-package com.bz.agent.model;
+package com.bz.agent.model.chat;
 
+import com.bz.agent.model.KnowledgeBase;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

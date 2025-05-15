@@ -1,4 +1,4 @@
-package com.bz.agent.model;
+package com.bz.agent.model.chat;
 
 import lombok.Builder;
 import lombok.Data;

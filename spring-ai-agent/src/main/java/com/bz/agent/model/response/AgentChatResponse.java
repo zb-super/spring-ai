@@ -1,4 +1,4 @@
-package com.bz.agent.model;
+package com.bz.agent.model.response;
 
 public interface AgentChatResponse {
 
@@ -8,8 +8,8 @@ public interface AgentChatResponse {
         return new ThinkChatResponse(data);
     }
 
-    static AgentChatResponse ofToolResponse(Object data){
-        return new ThinkChatResponse(data);
+    static AgentChatResponse ofToolBeforeResponse(Object data){
+        return new ToolBeforeChatResponse(data);
     }
 
     static AgentChatResponse ofTextResponse(Object data){
@@ -22,8 +22,9 @@ public interface AgentChatResponse {
 
     enum Type {
         THINK,
-        TOOL,
-        TEXT,
-        ERROR
+        TOOL_BEFORE,
+        TOOL_RESULT,
+        ERROR,
+        TEXT;
     }
 }

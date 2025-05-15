@@ -1,7 +1,7 @@
 package com.bz.agent.executor;
 
-import com.bz.agent.model.ChatContext;
-import com.bz.agent.model.AgentChatResponse;
+import com.bz.agent.model.chat.ChatContext;
+import com.bz.agent.model.response.AgentChatResponse;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;

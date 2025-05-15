@@ -1,4 +1,4 @@
-package com.bz.agent.model;
+package com.bz.agent.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThinkChatResponse implements AgentChatResponse{
+public class ThinkChatResponse implements AgentChatResponse {
 
     private Object data;
 
