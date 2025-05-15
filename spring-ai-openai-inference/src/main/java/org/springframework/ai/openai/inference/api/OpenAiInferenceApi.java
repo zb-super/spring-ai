@@ -54,7 +54,7 @@ import java.util.function.Predicate;
  * @author David Frizelle
  * @author Alexandros Pappas
  */
-public class OpenAiApi {
+public class OpenAiInferenceApi {
 
 	/**
 	 * Returns a builder pre-populated with the current configuration for mutation.
@@ -103,9 +103,9 @@ public class OpenAiApi {
 	 * @param webClientBuilder WebClient builder.
 	 * @param responseErrorHandler Response error handler.
 	 */
-	public OpenAiApi(String baseUrl, ApiKey apiKey, MultiValueMap<String, String> headers, String completionsPath,
-			String embeddingsPath, RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
-			ResponseErrorHandler responseErrorHandler) {
+	public OpenAiInferenceApi(String baseUrl, ApiKey apiKey, MultiValueMap<String, String> headers, String completionsPath,
+							  String embeddingsPath, RestClient.Builder restClientBuilder, WebClient.Builder webClientBuilder,
+							  ResponseErrorHandler responseErrorHandler) {
 		this.baseUrl = baseUrl;
 		this.apiKey = apiKey;
 		this.headers = headers;
@@ -1793,7 +1793,7 @@ public class OpenAiApi {
 		}
 
 		// Copy constructor for mutate()
-		public Builder(OpenAiApi api) {
+		public Builder(OpenAiInferenceApi api) {
 			this.baseUrl = api.getBaseUrl();
 			this.apiKey = api.getApiKey();
 			this.headers = new LinkedMultiValueMap<>(api.getHeaders());
@@ -1874,9 +1874,9 @@ public class OpenAiApi {
 			return this;
 		}
 
-		public OpenAiApi build() {
+		public OpenAiInferenceApi build() {
 			Assert.notNull(this.apiKey, "apiKey must be set");
-			return new OpenAiApi(this.baseUrl, this.apiKey, this.headers, this.completionsPath, this.embeddingsPath,
+			return new OpenAiInferenceApi(this.baseUrl, this.apiKey, this.headers, this.completionsPath, this.embeddingsPath,
 					this.restClientBuilder, this.webClientBuilder, this.responseErrorHandler);
 		}
 

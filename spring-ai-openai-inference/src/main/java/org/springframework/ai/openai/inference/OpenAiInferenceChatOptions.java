@@ -22,11 +22,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
-import org.springframework.ai.openai.inference.api.OpenAiApi;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.AudioParameters;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.StreamOptions;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.ToolChoiceBuilder;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest.WebSearchOptions;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionRequest.AudioParameters;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionRequest.StreamOptions;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionRequest.ToolChoiceBuilder;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionRequest.WebSearchOptions;
 import org.springframework.ai.openai.inference.api.ResponseFormat;
 import org.springframework.ai.tool.ToolCallback;
 import org.springframework.lang.Nullable;
@@ -44,7 +44,7 @@ import java.util.*;
  * @since 0.8.0
  */
 @JsonInclude(Include.NON_NULL)
-public class OpenAiChatOptions implements ToolCallingChatOptions {
+public class OpenAiInferenceChatOptions implements ToolCallingChatOptions {
 
 	// @formatter:off
 	/**
@@ -151,7 +151,7 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 	 * A list of tools the model may call. Currently, only functions are supported as a tool. Use this to
 	 * provide a list of functions the model may generate JSON inputs for.
 	 */
-	private @JsonProperty("tools") List<OpenAiApi.FunctionTool> tools;
+	private @JsonProperty("tools") List<OpenAiInferenceApi.FunctionTool> tools;
 	/**
 	 * Controls which (if any) function is called by the model. none means the model will not call a
 	 * function and instead generates a message. auto means the model can pick between generating a message or calling a
@@ -225,8 +225,8 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 		return new Builder();
 	}
 
-	public static OpenAiChatOptions fromOptions(OpenAiChatOptions fromOptions) {
-		return OpenAiChatOptions.builder()
+	public static OpenAiInferenceChatOptions fromOptions(OpenAiInferenceChatOptions fromOptions) {
+		return OpenAiInferenceChatOptions.builder()
 			.model(fromOptions.getModel())
 			.frequencyPenalty(fromOptions.getFrequencyPenalty())
 			.logitBias(fromOptions.getLogitBias())
@@ -422,11 +422,11 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 		this.topP = topP;
 	}
 
-	public List<OpenAiApi.FunctionTool> getTools() {
+	public List<OpenAiInferenceApi.FunctionTool> getTools() {
 		return this.tools;
 	}
 
-	public void setTools(List<OpenAiApi.FunctionTool> tools) {
+	public void setTools(List<OpenAiInferenceApi.FunctionTool> tools) {
 		this.tools = tools;
 	}
 
@@ -555,8 +555,8 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 	}
 
 	@Override
-	public OpenAiChatOptions copy() {
-		return OpenAiChatOptions.fromOptions(this);
+	public OpenAiInferenceChatOptions copy() {
+		return OpenAiInferenceChatOptions.fromOptions(this);
 	}
 
 	@Override
@@ -577,7 +577,7 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		OpenAiChatOptions other = (OpenAiChatOptions) o;
+		OpenAiInferenceChatOptions other = (OpenAiInferenceChatOptions) o;
 		return Objects.equals(this.model, other.model) && Objects.equals(this.frequencyPenalty, other.frequencyPenalty)
 				&& Objects.equals(this.logitBias, other.logitBias) && Objects.equals(this.logprobs, other.logprobs)
 				&& Objects.equals(this.topLogprobs, other.topLogprobs)
@@ -609,13 +609,13 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 
 	public static class Builder {
 
-		protected OpenAiChatOptions options;
+		protected OpenAiInferenceChatOptions options;
 
 		public Builder() {
-			this.options = new OpenAiChatOptions();
+			this.options = new OpenAiInferenceChatOptions();
 		}
 
-		public Builder(OpenAiChatOptions options) {
+		public Builder(OpenAiInferenceChatOptions options) {
 			this.options = options;
 		}
 
@@ -624,7 +624,7 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 			return this;
 		}
 
-		public Builder model(OpenAiApi.ChatModel openAiChatModel) {
+		public Builder model(OpenAiInferenceApi.ChatModel openAiChatModel) {
 			this.options.model = openAiChatModel.getName();
 			return this;
 		}
@@ -709,7 +709,7 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 			return this;
 		}
 
-		public Builder tools(List<OpenAiApi.FunctionTool> tools) {
+		public Builder tools(List<OpenAiInferenceApi.FunctionTool> tools) {
 			this.options.tools = tools;
 			return this;
 		}
@@ -792,7 +792,7 @@ public class OpenAiChatOptions implements ToolCallingChatOptions {
 			return this;
 		}
 
-		public OpenAiChatOptions build() {
+		public OpenAiInferenceChatOptions build() {
 			return this.options;
 		}
 

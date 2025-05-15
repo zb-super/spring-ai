@@ -40,7 +40,7 @@ public class OpenAiStreamFunctionCallingHelper {
 	 * @param current the current ChatCompletionChunk
 	 * @return the merged ChatCompletionChunk
 	 */
-	public OpenAiApi.ChatCompletionChunk merge(OpenAiApi.ChatCompletionChunk previous, OpenAiApi.ChatCompletionChunk current) {
+	public OpenAiInferenceApi.ChatCompletionChunk merge(OpenAiInferenceApi.ChatCompletionChunk previous, OpenAiInferenceApi.ChatCompletionChunk current) {
 
 		if (previous == null) {
 			return current;
@@ -53,46 +53,46 @@ public class OpenAiStreamFunctionCallingHelper {
 		String systemFingerprint = (current.systemFingerprint() != null ? current.systemFingerprint()
 				: previous.systemFingerprint());
 		String object = (current.object() != null ? current.object() : previous.object());
-		OpenAiApi.Usage usage = (current.usage() != null ? current.usage() : previous.usage());
+		OpenAiInferenceApi.Usage usage = (current.usage() != null ? current.usage() : previous.usage());
 
-		OpenAiApi.ChatCompletionChunk.ChunkChoice previousChoice0 = (CollectionUtils.isEmpty(previous.choices()) ? null : previous.choices().get(0));
-		OpenAiApi.ChatCompletionChunk.ChunkChoice currentChoice0 = (CollectionUtils.isEmpty(current.choices()) ? null : current.choices().get(0));
+		OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice previousChoice0 = (CollectionUtils.isEmpty(previous.choices()) ? null : previous.choices().get(0));
+		OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice currentChoice0 = (CollectionUtils.isEmpty(current.choices()) ? null : current.choices().get(0));
 
-		OpenAiApi.ChatCompletionChunk.ChunkChoice choice = merge(previousChoice0, currentChoice0);
-		List<OpenAiApi.ChatCompletionChunk.ChunkChoice> chunkChoices = choice == null ? List.of() : List.of(choice);
-		return new OpenAiApi.ChatCompletionChunk(id, chunkChoices, created, model, serviceTier, systemFingerprint, object, usage);
+		OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice choice = merge(previousChoice0, currentChoice0);
+		List<OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice> chunkChoices = choice == null ? List.of() : List.of(choice);
+		return new OpenAiInferenceApi.ChatCompletionChunk(id, chunkChoices, created, model, serviceTier, systemFingerprint, object, usage);
 	}
 
-	private OpenAiApi.ChatCompletionChunk.ChunkChoice merge(OpenAiApi.ChatCompletionChunk.ChunkChoice previous, OpenAiApi.ChatCompletionChunk.ChunkChoice current) {
+	private OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice merge(OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice previous, OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice current) {
 		if (previous == null) {
 			return current;
 		}
 
-		OpenAiApi.ChatCompletionFinishReason finishReason = (current.finishReason() != null ? current.finishReason()
+		OpenAiInferenceApi.ChatCompletionFinishReason finishReason = (current.finishReason() != null ? current.finishReason()
 				: previous.finishReason());
 		Integer index = (current.index() != null ? current.index() : previous.index());
 
-		OpenAiApi.ChatCompletionMessage message = merge(previous.delta(), current.delta());
+		OpenAiInferenceApi.ChatCompletionMessage message = merge(previous.delta(), current.delta());
 
-		OpenAiApi.LogProbs logprobs = (current.logprobs() != null ? current.logprobs() : previous.logprobs());
-		return new OpenAiApi.ChatCompletionChunk.ChunkChoice(finishReason, index, message, logprobs);
+		OpenAiInferenceApi.LogProbs logprobs = (current.logprobs() != null ? current.logprobs() : previous.logprobs());
+		return new OpenAiInferenceApi.ChatCompletionChunk.ChunkChoice(finishReason, index, message, logprobs);
 	}
 
-	private OpenAiApi.ChatCompletionMessage merge(OpenAiApi.ChatCompletionMessage previous, OpenAiApi.ChatCompletionMessage current) {
+	private OpenAiInferenceApi.ChatCompletionMessage merge(OpenAiInferenceApi.ChatCompletionMessage previous, OpenAiInferenceApi.ChatCompletionMessage current) {
 		String content = (current.content() != null ? current.content()
 				: "" + ((previous.content() != null) ? previous.content() : ""));
-		OpenAiApi.ChatCompletionMessage.Role role = (current.role() != null ? current.role() : previous.role());
-		role = (role != null ? role : OpenAiApi.ChatCompletionMessage.Role.ASSISTANT); // default to ASSISTANT (if null
+		OpenAiInferenceApi.ChatCompletionMessage.Role role = (current.role() != null ? current.role() : previous.role());
+		role = (role != null ? role : OpenAiInferenceApi.ChatCompletionMessage.Role.ASSISTANT); // default to ASSISTANT (if null
 		String name = (current.name() != null ? current.name() : previous.name());
 		String toolCallId = (current.toolCallId() != null ? current.toolCallId() : previous.toolCallId());
 		String refusal = (current.refusal() != null ? current.refusal() : previous.refusal());
-		OpenAiApi.ChatCompletionMessage.AudioOutput audioOutput = (current.audioOutput() != null ? current.audioOutput()
+		OpenAiInferenceApi.ChatCompletionMessage.AudioOutput audioOutput = (current.audioOutput() != null ? current.audioOutput()
 				: previous.audioOutput());
-		List<OpenAiApi.ChatCompletionMessage.Annotation> annotations = (current.annotations() != null ? current.annotations()
+		List<OpenAiInferenceApi.ChatCompletionMessage.Annotation> annotations = (current.annotations() != null ? current.annotations()
 				: previous.annotations());
 
-		List<OpenAiApi.ChatCompletionMessage.ToolCall> toolCalls = new ArrayList<>();
-		OpenAiApi.ChatCompletionMessage.ToolCall lastPreviousTooCall = null;
+		List<OpenAiInferenceApi.ChatCompletionMessage.ToolCall> toolCalls = new ArrayList<>();
+		OpenAiInferenceApi.ChatCompletionMessage.ToolCall lastPreviousTooCall = null;
 		if (previous.toolCalls() != null) {
 			lastPreviousTooCall = previous.toolCalls().get(previous.toolCalls().size() - 1);
 			if (previous.toolCalls().size() > 1) {
@@ -119,20 +119,20 @@ public class OpenAiStreamFunctionCallingHelper {
 				toolCalls.add(lastPreviousTooCall);
 			}
 		}
-		return new OpenAiApi.ChatCompletionMessage(content, role, name, toolCallId, toolCalls, refusal, audioOutput, annotations);
+		return new OpenAiInferenceApi.ChatCompletionMessage(content, role, name, toolCallId, toolCalls, refusal, audioOutput, annotations);
 	}
 
-	private OpenAiApi.ChatCompletionMessage.ToolCall merge(OpenAiApi.ChatCompletionMessage.ToolCall previous, OpenAiApi.ChatCompletionMessage.ToolCall current) {
+	private OpenAiInferenceApi.ChatCompletionMessage.ToolCall merge(OpenAiInferenceApi.ChatCompletionMessage.ToolCall previous, OpenAiInferenceApi.ChatCompletionMessage.ToolCall current) {
 		if (previous == null) {
 			return current;
 		}
 		String id = (StringUtils.hasText(current.id()) ? current.id() : previous.id());
 		String type = (current.type() != null ? current.type() : previous.type());
-		OpenAiApi.ChatCompletionMessage.ChatCompletionFunction function = merge(previous.function(), current.function());
-		return new OpenAiApi.ChatCompletionMessage.ToolCall(id, type, function);
+		OpenAiInferenceApi.ChatCompletionMessage.ChatCompletionFunction function = merge(previous.function(), current.function());
+		return new OpenAiInferenceApi.ChatCompletionMessage.ToolCall(id, type, function);
 	}
 
-	private OpenAiApi.ChatCompletionMessage.ChatCompletionFunction merge(OpenAiApi.ChatCompletionMessage.ChatCompletionFunction previous, OpenAiApi.ChatCompletionMessage.ChatCompletionFunction current) {
+	private OpenAiInferenceApi.ChatCompletionMessage.ChatCompletionFunction merge(OpenAiInferenceApi.ChatCompletionMessage.ChatCompletionFunction previous, OpenAiInferenceApi.ChatCompletionMessage.ChatCompletionFunction current) {
 		if (previous == null) {
 			return current;
 		}
@@ -144,14 +144,14 @@ public class OpenAiStreamFunctionCallingHelper {
 		if (current.arguments() != null) {
 			arguments.append(current.arguments());
 		}
-		return new OpenAiApi.ChatCompletionMessage.ChatCompletionFunction(name, arguments.toString());
+		return new OpenAiInferenceApi.ChatCompletionMessage.ChatCompletionFunction(name, arguments.toString());
 	}
 
 	/**
 	 * @param chatCompletion the ChatCompletionChunk to check
 	 * @return true if the ChatCompletionChunk is a streaming tool function call.
 	 */
-	public boolean isStreamingToolFunctionCall(OpenAiApi.ChatCompletionChunk chatCompletion) {
+	public boolean isStreamingToolFunctionCall(OpenAiInferenceApi.ChatCompletionChunk chatCompletion) {
 
 		if (chatCompletion == null || CollectionUtils.isEmpty(chatCompletion.choices())) {
 			return false;
@@ -169,7 +169,7 @@ public class OpenAiStreamFunctionCallingHelper {
 	 * @return true if the ChatCompletionChunk is a streaming tool function call and it is
 	 * the last one.
 	 */
-	public boolean isStreamingToolFunctionCallFinish(OpenAiApi.ChatCompletionChunk chatCompletion) {
+	public boolean isStreamingToolFunctionCallFinish(OpenAiInferenceApi.ChatCompletionChunk chatCompletion) {
 
 		if (chatCompletion == null || CollectionUtils.isEmpty(chatCompletion.choices())) {
 			return false;
@@ -179,7 +179,7 @@ public class OpenAiStreamFunctionCallingHelper {
 		if (choice == null || choice.delta() == null) {
 			return false;
 		}
-		return choice.finishReason() == OpenAiApi.ChatCompletionFinishReason.TOOL_CALLS;
+		return choice.finishReason() == OpenAiInferenceApi.ChatCompletionFinishReason.TOOL_CALLS;
 	}
 
 	/**
@@ -187,14 +187,14 @@ public class OpenAiStreamFunctionCallingHelper {
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
-	public OpenAiApi.ChatCompletion chunkToChatCompletion(OpenAiApi.ChatCompletionChunk chunk) {
-		List<OpenAiApi.ChatCompletion.Choice> choices = chunk.choices()
+	public OpenAiInferenceApi.ChatCompletion chunkToChatCompletion(OpenAiInferenceApi.ChatCompletionChunk chunk) {
+		List<OpenAiInferenceApi.ChatCompletion.Choice> choices = chunk.choices()
 			.stream()
-			.map(chunkChoice -> new OpenAiApi.ChatCompletion.Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
+			.map(chunkChoice -> new OpenAiInferenceApi.ChatCompletion.Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
 					chunkChoice.logprobs()))
 			.toList();
 
-		return new OpenAiApi.ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.serviceTier(),
+		return new OpenAiInferenceApi.ChatCompletion(chunk.id(), choices, chunk.created(), chunk.model(), chunk.serviceTier(),
 				chunk.systemFingerprint(), "chat.completion", null);
 	}
 

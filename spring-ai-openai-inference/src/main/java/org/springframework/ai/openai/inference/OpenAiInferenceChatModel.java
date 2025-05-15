@@ -36,15 +36,15 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.content.Media;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.model.tool.*;
-import org.springframework.ai.openai.inference.api.OpenAiApi;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletion;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletion.Choice;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.AudioOutput;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.ChatCompletionFunction;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.MediaContent;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionMessage.ToolCall;
-import org.springframework.ai.openai.inference.api.OpenAiApi.ChatCompletionRequest;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletion;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletion.Choice;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionMessage;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionMessage.AudioOutput;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionMessage.ChatCompletionFunction;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionMessage.MediaContent;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionMessage.ToolCall;
+import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionRequest;
 import org.springframework.ai.openai.inference.api.common.OpenAiApiConstants;
 import org.springframework.ai.openai.inference.metadata.support.OpenAiResponseHeaderExtractor;
 import org.springframework.ai.retry.RetryUtils;
@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 
 /**
  * {@link ChatModel} and {@link StreamingChatModel} implementation for {@literal OpenAI}
- * backed by {@link OpenAiApi}.
+ * backed by {@link OpenAiInferenceApi}.
  *
  * @author Mark Pollack
  * @author Christian Tzolov
@@ -84,11 +84,11 @@ import java.util.stream.Collectors;
  * @author Jonghoon Park
  * @see ChatModel
  * @see StreamingChatModel
- * @see OpenAiApi
+ * @see OpenAiInferenceApi
  */
-public class OpenAiChatModel implements ChatModel {
+public class OpenAiInferenceChatModel implements ChatModel {
 
-	private static final Logger logger = LoggerFactory.getLogger(OpenAiChatModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(OpenAiInferenceChatModel.class);
 
 	private static final ChatModelObservationConvention DEFAULT_OBSERVATION_CONVENTION = new DefaultChatModelObservationConvention();
 
@@ -97,7 +97,7 @@ public class OpenAiChatModel implements ChatModel {
 	/**
 	 * The default options used for the chat completion requests.
 	 */
-	private final OpenAiChatOptions defaultOptions;
+	private final OpenAiInferenceChatOptions defaultOptions;
 
 	/**
 	 * The retry template used to retry the OpenAI API calls.
@@ -107,7 +107,7 @@ public class OpenAiChatModel implements ChatModel {
 	/**
 	 * Low-level access to the OpenAI API.
 	 */
-	private final OpenAiApi openAiApi;
+	private final OpenAiInferenceApi openAiApi;
 
 	/**
 	 * Observation registry used for instrumentation.
@@ -127,15 +127,15 @@ public class OpenAiChatModel implements ChatModel {
 	 */
 	private ChatModelObservationConvention observationConvention = DEFAULT_OBSERVATION_CONVENTION;
 
-	public OpenAiChatModel(OpenAiApi openAiApi, OpenAiChatOptions defaultOptions, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
+	public OpenAiInferenceChatModel(OpenAiInferenceApi openAiApi, OpenAiInferenceChatOptions defaultOptions, ToolCallingManager toolCallingManager,
+									RetryTemplate retryTemplate, ObservationRegistry observationRegistry) {
 		this(openAiApi, defaultOptions, toolCallingManager, retryTemplate, observationRegistry,
 				new DefaultToolExecutionEligibilityPredicate());
 	}
 
-	public OpenAiChatModel(OpenAiApi openAiApi, OpenAiChatOptions defaultOptions, ToolCallingManager toolCallingManager,
-			RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
-			ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
+	public OpenAiInferenceChatModel(OpenAiInferenceApi openAiApi, OpenAiInferenceChatOptions defaultOptions, ToolCallingManager toolCallingManager,
+									RetryTemplate retryTemplate, ObservationRegistry observationRegistry,
+									ToolExecutionEligibilityPredicate toolExecutionEligibilityPredicate) {
 		Assert.notNull(openAiApi, "openAiApi cannot be null");
 		Assert.notNull(defaultOptions, "defaultOptions cannot be null");
 		Assert.notNull(toolCallingManager, "toolCallingManager cannot be null");
@@ -204,7 +204,7 @@ public class OpenAiChatModel implements ChatModel {
 				RateLimit rateLimit = OpenAiResponseHeaderExtractor.extractAiResponseHeaders(completionEntity);
 
 				// Current usage
-				OpenAiApi.Usage usage = chatCompletion.usage();
+				OpenAiInferenceApi.Usage usage = chatCompletion.usage();
 				Usage currentChatResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
 				Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
 						previousChatResponse);
@@ -259,7 +259,7 @@ public class OpenAiChatModel implements ChatModel {
 				throw new IllegalArgumentException("Audio parameters are not supported for streaming requests.");
 			}
 
-			Flux<OpenAiApi.ChatCompletionChunk> completionChunks = this.openAiApi.chatCompletionStream(request,
+			Flux<OpenAiInferenceApi.ChatCompletionChunk> completionChunks = this.openAiApi.chatCompletionStream(request,
 					getAdditionalHttpHeaders(prompt));
 
 			// For chunked responses, only the first chunk contains the choice role.
@@ -299,7 +299,7 @@ public class OpenAiChatModel implements ChatModel {
 							return buildGeneration(choice, metadata, request);
 						}).toList();
 						// @formatter:on
-						OpenAiApi.Usage usage = chatCompletion2.usage();
+						OpenAiInferenceApi.Usage usage = chatCompletion2.usage();
 						Usage currentChatResponseUsage = usage != null ? getDefaultUsage(usage) : new EmptyUsage();
 						Usage accumulatedUsage = UsageCalculator.getCumulativeUsage(currentChatResponseUsage,
 								previousChatResponse);
@@ -374,7 +374,7 @@ public class OpenAiChatModel implements ChatModel {
 	private MultiValueMap<String, String> getAdditionalHttpHeaders(Prompt prompt) {
 
 		Map<String, String> headers = new HashMap<>(this.defaultOptions.getHttpHeaders());
-		if (prompt.getOptions() != null && prompt.getOptions() instanceof OpenAiChatOptions chatOptions) {
+		if (prompt.getOptions() != null && prompt.getOptions() instanceof OpenAiInferenceChatOptions chatOptions) {
 			headers.putAll(chatOptions.getHttpHeaders());
 		}
 		return CollectionUtils.toMultiValueMap(
@@ -452,7 +452,7 @@ public class OpenAiChatModel implements ChatModel {
 	 * @param chunk the ChatCompletionChunk to convert
 	 * @return the ChatCompletion
 	 */
-	private ChatCompletion chunkToChatCompletion(OpenAiApi.ChatCompletionChunk chunk) {
+	private ChatCompletion chunkToChatCompletion(OpenAiInferenceApi.ChatCompletionChunk chunk) {
 		List<Choice> choices = chunk.choices()
 			.stream()
 			.map(chunkChoice -> new Choice(chunkChoice.finishReason(), chunkChoice.index(), chunkChoice.delta(),
@@ -463,27 +463,27 @@ public class OpenAiChatModel implements ChatModel {
 				chunk.systemFingerprint(), "chat.completion", chunk.usage());
 	}
 
-	private DefaultUsage getDefaultUsage(OpenAiApi.Usage usage) {
+	private DefaultUsage getDefaultUsage(OpenAiInferenceApi.Usage usage) {
 		return new DefaultUsage(usage.promptTokens(), usage.completionTokens(), usage.totalTokens(), usage);
 	}
 
 	Prompt buildRequestPrompt(Prompt prompt) {
 		// Process runtime options
-		OpenAiChatOptions runtimeOptions = null;
+		OpenAiInferenceChatOptions runtimeOptions = null;
 		if (prompt.getOptions() != null) {
 			if (prompt.getOptions() instanceof ToolCallingChatOptions toolCallingChatOptions) {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(toolCallingChatOptions, ToolCallingChatOptions.class,
-						OpenAiChatOptions.class);
+						OpenAiInferenceChatOptions.class);
 			}
 			else {
 				runtimeOptions = ModelOptionsUtils.copyToTarget(prompt.getOptions(), ChatOptions.class,
-						OpenAiChatOptions.class);
+						OpenAiInferenceChatOptions.class);
 			}
 		}
 
 		// Define request options by merging runtime options and default options
-		OpenAiChatOptions requestOptions = ModelOptionsUtils.merge(runtimeOptions, this.defaultOptions,
-				OpenAiChatOptions.class);
+		OpenAiInferenceChatOptions requestOptions = ModelOptionsUtils.merge(runtimeOptions, this.defaultOptions,
+				OpenAiInferenceChatOptions.class);
 
 		// Merge @JsonIgnore-annotated options explicitly since they are ignored by
 		// Jackson, used by ModelOptionsUtils.
@@ -582,14 +582,14 @@ public class OpenAiChatModel implements ChatModel {
 
 		ChatCompletionRequest request = new ChatCompletionRequest(chatCompletionMessages, stream);
 
-		OpenAiChatOptions requestOptions = (OpenAiChatOptions) prompt.getOptions();
+		OpenAiInferenceChatOptions requestOptions = (OpenAiInferenceChatOptions) prompt.getOptions();
 		request = ModelOptionsUtils.merge(requestOptions, request, ChatCompletionRequest.class);
 
 		// Add the tool definitions to the request's tools parameter.
 		List<ToolDefinition> toolDefinitions = this.toolCallingManager.resolveToolDefinitions(requestOptions);
 		if (!CollectionUtils.isEmpty(toolDefinitions)) {
 			request = ModelOptionsUtils.merge(
-					OpenAiChatOptions.builder().tools(this.getFunctionTools(toolDefinitions)).build(), request,
+					OpenAiInferenceChatOptions.builder().tools(this.getFunctionTools(toolDefinitions)).build(), request,
 					ChatCompletionRequest.class);
 		}
 
@@ -641,17 +641,17 @@ public class OpenAiChatModel implements ChatModel {
 		}
 	}
 
-	private List<OpenAiApi.FunctionTool> getFunctionTools(List<ToolDefinition> toolDefinitions) {
+	private List<OpenAiInferenceApi.FunctionTool> getFunctionTools(List<ToolDefinition> toolDefinitions) {
 		return toolDefinitions.stream().map(toolDefinition -> {
-			var function = new OpenAiApi.FunctionTool.Function(toolDefinition.description(), toolDefinition.name(),
+			var function = new OpenAiInferenceApi.FunctionTool.Function(toolDefinition.description(), toolDefinition.name(),
 					toolDefinition.inputSchema());
-			return new OpenAiApi.FunctionTool(function);
+			return new OpenAiInferenceApi.FunctionTool(function);
 		}).toList();
 	}
 
 	@Override
 	public ChatOptions getDefaultOptions() {
-		return OpenAiChatOptions.fromOptions(this.defaultOptions);
+		return OpenAiInferenceChatOptions.fromOptions(this.defaultOptions);
 	}
 
 	@Override
@@ -680,14 +680,14 @@ public class OpenAiChatModel implements ChatModel {
 	}
 
 	@Override
-	public OpenAiChatModel clone() {
+	public OpenAiInferenceChatModel clone() {
 		return this.mutate().build();
 	}
 
 	public static final class Builder {
 
 		// Copy constructor for mutate()
-		public Builder(OpenAiChatModel model) {
+		public Builder(OpenAiInferenceChatModel model) {
 			this.openAiApi = model.openAiApi;
 			this.defaultOptions = model.defaultOptions;
 			this.toolCallingManager = model.toolCallingManager;
@@ -696,10 +696,10 @@ public class OpenAiChatModel implements ChatModel {
 			this.observationRegistry = model.observationRegistry;
 		}
 
-		private OpenAiApi openAiApi;
+		private OpenAiInferenceApi openAiApi;
 
-		private OpenAiChatOptions defaultOptions = OpenAiChatOptions.builder()
-			.model(OpenAiApi.DEFAULT_CHAT_MODEL)
+		private OpenAiInferenceChatOptions defaultOptions = OpenAiInferenceChatOptions.builder()
+			.model(OpenAiInferenceApi.DEFAULT_CHAT_MODEL)
 			.temperature(0.7)
 			.build();
 
@@ -714,12 +714,12 @@ public class OpenAiChatModel implements ChatModel {
 		private Builder() {
 		}
 
-		public Builder openAiApi(OpenAiApi openAiApi) {
+		public Builder openAiApi(OpenAiInferenceApi openAiApi) {
 			this.openAiApi = openAiApi;
 			return this;
 		}
 
-		public Builder defaultOptions(OpenAiChatOptions defaultOptions) {
+		public Builder defaultOptions(OpenAiInferenceChatOptions defaultOptions) {
 			this.defaultOptions = defaultOptions;
 			return this;
 		}
@@ -745,12 +745,12 @@ public class OpenAiChatModel implements ChatModel {
 			return this;
 		}
 
-		public OpenAiChatModel build() {
+		public OpenAiInferenceChatModel build() {
 			if (this.toolCallingManager != null) {
-				return new OpenAiChatModel(this.openAiApi, this.defaultOptions, this.toolCallingManager,
+				return new OpenAiInferenceChatModel(this.openAiApi, this.defaultOptions, this.toolCallingManager,
 						this.retryTemplate, this.observationRegistry, this.toolExecutionEligibilityPredicate);
 			}
-			return new OpenAiChatModel(this.openAiApi, this.defaultOptions, DEFAULT_TOOL_CALLING_MANAGER,
+			return new OpenAiInferenceChatModel(this.openAiApi, this.defaultOptions, DEFAULT_TOOL_CALLING_MANAGER,
 					this.retryTemplate, this.observationRegistry, this.toolExecutionEligibilityPredicate);
 		}
 
