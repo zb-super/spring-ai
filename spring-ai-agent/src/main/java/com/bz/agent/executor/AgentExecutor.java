@@ -12,6 +12,4 @@ public interface AgentExecutor {
      * @return
      */
     public Flux<AgentChatResponse> chatStream(ChatContext context);
-
-    public
 }
