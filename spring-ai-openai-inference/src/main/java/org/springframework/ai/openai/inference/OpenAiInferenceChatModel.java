@@ -46,6 +46,7 @@ import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatComple
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionMessage.ToolCall;
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi.ChatCompletionRequest;
 import org.springframework.ai.openai.inference.api.common.OpenAiApiConstants;
+import org.springframework.ai.openai.inference.metadata.MsgMetadataType;
 import org.springframework.ai.openai.inference.metadata.support.OpenAiResponseHeaderExtractor;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.support.UsageCalculator;
@@ -395,6 +396,8 @@ public class OpenAiInferenceChatModel implements ChatModel {
 
 		List<Media> media = new ArrayList<>();
 		String textContent = choice.message().content();
+		String reasoningContent = choice.message().reasoningContent();
+
 		var audioOutput = choice.message().audioOutput();
 		if (audioOutput != null) {
 			String mimeType = String.format("audio/%s", request.audioParameters().format().name().toLowerCase());
@@ -409,6 +412,15 @@ public class OpenAiInferenceChatModel implements ChatModel {
 			if (!StringUtils.hasText(textContent)) {
 				textContent = audioOutput.transcript();
 			}
+			// 推理内内容
+			if (StringUtils.hasText(reasoningContent)) {
+				textContent = reasoningContent;
+				metadata.put("type", MsgMetadataType.THINK);
+			}else {
+				// 正文内容
+				metadata.put("type", MsgMetadataType.TEXT);
+			}
+
 			generationMetadataBuilder.metadata("audioId", audioOutput.id());
 			generationMetadataBuilder.metadata("audioExpiresAt", audioOutput.expiresAt());
 		}
@@ -562,7 +574,7 @@ public class OpenAiInferenceChatModel implements ChatModel {
 
 				}
 				return List.of(new ChatCompletionMessage(assistantMessage.getText(),
-						ChatCompletionMessage.Role.ASSISTANT, null, null, toolCalls, null, audioOutput, null));
+						ChatCompletionMessage.Role.ASSISTANT, null, null, toolCalls, null, audioOutput, null, null));
 			}
 			else if (message.getMessageType() == MessageType.TOOL) {
 				ToolResponseMessage toolMessage = (ToolResponseMessage) message;
@@ -572,7 +584,7 @@ public class OpenAiInferenceChatModel implements ChatModel {
 				return toolMessage.getResponses()
 					.stream()
 					.map(tr -> new ChatCompletionMessage(tr.responseData(), ChatCompletionMessage.Role.TOOL, tr.name(),
-							tr.id(), null, null, null, null))
+							tr.id(), null, null, null, null, null))
 					.toList();
 			}
 			else {

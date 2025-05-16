@@ -119,7 +119,7 @@ public class OpenAiStreamFunctionCallingHelper {
 				toolCalls.add(lastPreviousTooCall);
 			}
 		}
-		return new OpenAiInferenceApi.ChatCompletionMessage(content, role, name, toolCallId, toolCalls, refusal, audioOutput, annotations);
+		return new OpenAiInferenceApi.ChatCompletionMessage(content, role, name, toolCallId, toolCalls, refusal, audioOutput, annotations, null);
 	}
 
 	private OpenAiInferenceApi.ChatCompletionMessage.ToolCall merge(OpenAiInferenceApi.ChatCompletionMessage.ToolCall previous, OpenAiInferenceApi.ChatCompletionMessage.ToolCall current) {
