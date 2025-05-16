@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TestChatModelOutput {
     public static void main(String[] args) {
-        String key = "sk-0f38ec133e2c466089d90e7fc18fafcc";
+        String key = "";
 
         ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 
