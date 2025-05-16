@@ -13,11 +13,19 @@ public interface AgentChatResponse {
     }
 
     static AgentChatResponse ofTextResponse(Object data){
-        return new ThinkChatResponse(data);
+        return new TextChatResponse(data);
     }
 
     static AgentChatResponse ofErrorResponse(Object data){
-        return new ThinkChatResponse(data);
+        return new ExceptionChatResponse(data);
+    }
+
+    static AgentChatResponse ofDelimiterResponse(Object data){
+        return new DelimiterChatResponse(data);
+    }
+
+    static AgentChatResponse ofStopResponse(Object data){
+        return new StopChatResponse(data);
     }
 
     enum Type {
