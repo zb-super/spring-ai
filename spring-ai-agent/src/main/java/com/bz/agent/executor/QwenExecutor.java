@@ -20,6 +20,7 @@ public class QwenExecutor extends AbstractAgentExecutor implements AgentExecutor
     protected void doChatSteam(Prompt prompt, ChatModel chatModel, FluxSink<AgentChatResponse> emitter){
         Objects.requireNonNull(chatModel.stream(prompt)
                         .doOnNext(item -> {
+//                            item.getResult().getOutput().getText()
                             String text = item.getResult().getOutput().getText();
 //                            emitter.next(new AgentChatResponse(text, AgentChatResponse.Type.TEXT));
                         })

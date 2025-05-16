@@ -290,13 +290,20 @@ public class OpenAiInferenceChatModel implements ChatModel {
 							if (choice.message().role() != null) {
 								roleMap.putIfAbsent(id, choice.message().role().name());
 							}
-							Map<String, Object> metadata = Map.of(
-									"id", id,
-									"role", roleMap.getOrDefault(id, ""),
-									"index", choice.index(),
-									"finishReason", choice.finishReason() != null ? choice.finishReason().name() : "",
-									"refusal", StringUtils.hasText(choice.message().refusal()) ? choice.message().refusal() : "",
-									"annotations", choice.message().annotations() != null ? choice.message().annotations() : List.of());
+//							Map<String, Object> metadata = Map.of(
+//									"id", id,
+//									"role", roleMap.getOrDefault(id, ""),
+//									"index", choice.index(),
+//									"finishReason", choice.finishReason() != null ? choice.finishReason().name() : "",
+//									"refusal", StringUtils.hasText(choice.message().refusal()) ? choice.message().refusal() : "",
+//									"annotations", choice.message().annotations() != null ? choice.message().annotations() : List.of());
+							Map<String, Object> metadata = new HashMap<>();
+							metadata.put("id",id);
+							metadata.put("role",roleMap.getOrDefault(id, ""));
+							metadata.put("index",  choice.index());
+							metadata.put("finishReason",choice.finishReason() != null ? choice.finishReason().name() : "");
+							metadata.put("refusal", StringUtils.hasText(choice.message().refusal()) ? choice.message().refusal() : "");
+							metadata.put("annotations",choice.message().annotations() != null ? choice.message().annotations() : List.of());
 							return buildGeneration(choice, metadata, request);
 						}).toList();
 						// @formatter:on
@@ -412,17 +419,15 @@ public class OpenAiInferenceChatModel implements ChatModel {
 			if (!StringUtils.hasText(textContent)) {
 				textContent = audioOutput.transcript();
 			}
+
+			generationMetadataBuilder.metadata("audioId", audioOutput.id());
+			generationMetadataBuilder.metadata("audioExpiresAt", audioOutput.expiresAt());
+		}else {
 			// 推理内内容
 			if (StringUtils.hasText(reasoningContent)) {
 				textContent = reasoningContent;
 				metadata.put("type", MsgMetadataType.THINK);
-			}else {
-				// 正文内容
-				metadata.put("type", MsgMetadataType.TEXT);
 			}
-
-			generationMetadataBuilder.metadata("audioId", audioOutput.id());
-			generationMetadataBuilder.metadata("audioExpiresAt", audioOutput.expiresAt());
 		}
 
 		if (Boolean.TRUE.equals(request.logprobs())) {
