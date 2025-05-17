@@ -13,7 +13,9 @@ import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
 import org.springframework.ai.openai.inference.metadata.MsgMetadataType;
 import org.springframework.retry.support.RetryTemplate;
 import reactor.core.publisher.FluxSink;
+import reactor.core.scheduler.Schedulers;
 
+import java.util.List;
 import java.util.Map;
 
 public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExecutor {
@@ -29,16 +31,17 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
         chatModel.stream(prompt)
                 .doOnNext(chatResponse -> sendMsg(chatResponse, emitter))
                 .collectList()
-                .block()
-                .stream()
-                .filter(ChatResponse::hasToolCalls)
-                .forEach(chatResponse -> {
-                    var toolExecutionResult = toolCallingManager.executeToolCalls(prompt, chatResponse);
-                    if (toolExecutionResult.returnDirect()) {
-                        emitter.next(AgentChatResponse.ofStopResponse());
-                    }else {
-                        doChatWithStream(num + 1 ,new Prompt(toolExecutionResult.conversationHistory(), prompt.getOptions()), chatModel, emitter);
-                    }
+                .subscribe(chatResponseList -> {
+                    System.out.println(Thread.currentThread().getName() + " =>>>>>>>>sub");
+//                    List<ChatResponse> list = chatResponseList.stream().toList();
+//                    list.stream().forEach(chatResponse1 -> {
+//                        var toolExecutionResult = toolCallingManager.executeToolCalls(prompt, chatResponse1);
+//                        if (toolExecutionResult.returnDirect()) {
+//                            emitter.next(AgentChatResponse.ofStopResponse());
+//                        }else {
+//                            doChatWithStream(num + 1 ,new Prompt(toolExecutionResult.conversationHistory(), prompt.getOptions()), chatModel, emitter);
+//                        }
+//                    });
                 });
     }
 

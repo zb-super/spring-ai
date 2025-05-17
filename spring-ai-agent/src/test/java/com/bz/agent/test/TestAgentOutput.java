@@ -25,7 +25,6 @@ import java.util.ArrayList;
 public class TestAgentOutput {
     public static void main(String[] args) {
         String key = "sk-0f38ec133e2c466089d90e7fc18fafcc";
-
         User user = User.builder()
                 .userInput("今天天气怎么样？")
                 .build();
@@ -46,7 +45,6 @@ public class TestAgentOutput {
                 .knowledgeBases(new ArrayList<>())
                 .callbacks(ToolCallbacks.from(new TestUtils()))
                 .build();
-
         agentExecutor.chatStream(context)
                 .filter(item -> item.getData() != null)
                 .subscribe(chat -> System.out.println(chat.getData()));

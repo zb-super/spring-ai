@@ -9,7 +9,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.tool.ToolCallbacks;
+//import org.springframework.ai.tool.ToolCallbacks;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,21 +39,10 @@ public class ChatDemoController {
 
     @GetMapping(value = "/ai")
     Flux<String> generation(@RequestParam("userInput") String userInput) {
-        ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
-
-        ChatOptions chatOptions = ToolCallingChatOptions.builder()
-//                .toolCallbacks(ToolCallbacks.from(new TestUtils()))
-                .internalToolExecutionEnabled(false)
-                .build();
-
-        Prompt prompt = new Prompt(
-                List.of(new SystemMessage("You are a helpful assistant."), new UserMessage("今天天气怎么样")),
-                chatOptions);
-
-
-        Flux<ChatResponse> stream = chatModel.stream(prompt);
-
-
-        return null;
+        return chatClient
+                .prompt()
+                .user(userInput)
+                .stream()
+                .content();
     }
 }
