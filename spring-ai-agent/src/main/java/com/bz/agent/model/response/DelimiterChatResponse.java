@@ -5,14 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class DelimiterChatResponse implements AgentChatResponse {
 
-    private Object data;
+//    private Object data;
 
     @Override
     public Type getType() {
         return Type.DELIMITER;
+    }
+
+    @Override
+    public Object getData() {
+        return null;
     }
 }

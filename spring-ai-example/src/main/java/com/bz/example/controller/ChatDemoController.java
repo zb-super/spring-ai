@@ -1,6 +1,5 @@
-package com.bz.common.example.controller;
+package com.bz.example.controller;
 
-import com.bz.common.example.tool.TestUtils;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -43,7 +42,7 @@ public class ChatDemoController {
         ToolCallingManager toolCallingManager = ToolCallingManager.builder().build();
 
         ChatOptions chatOptions = ToolCallingChatOptions.builder()
-                .toolCallbacks(ToolCallbacks.from(new TestUtils()))
+//                .toolCallbacks(ToolCallbacks.from(new TestUtils()))
                 .internalToolExecutionEnabled(false)
                 .build();
 

@@ -22,5 +22,10 @@
             <artifactId>spring-ai-common</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>com.bz</groupId>
+            <artifactId>spring-ai-openai-inference</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 </project>

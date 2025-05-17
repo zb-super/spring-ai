@@ -4,6 +4,8 @@ public interface AgentChatResponse {
 
     Type getType();
 
+    public Object getData();
+
     static AgentChatResponse ofThinkResponse(Object data){
         return new ThinkChatResponse(data);
     }
@@ -20,12 +22,12 @@ public interface AgentChatResponse {
         return new ExceptionChatResponse(data);
     }
 
-    static AgentChatResponse ofDelimiterResponse(Object data){
-        return new DelimiterChatResponse(data);
+    static AgentChatResponse ofDelimiterResponse(){
+        return new DelimiterChatResponse();
     }
 
-    static AgentChatResponse ofStopResponse(Object data){
-        return new StopChatResponse(data);
+    static AgentChatResponse ofStopResponse(){
+        return new StopChatResponse();
     }
 
     enum Type {

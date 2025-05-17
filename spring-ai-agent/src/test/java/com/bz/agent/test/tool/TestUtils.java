@@ -1,4 +1,4 @@
-package com.bz.common.example.tool;
+package com.bz.agent.test.tool;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;

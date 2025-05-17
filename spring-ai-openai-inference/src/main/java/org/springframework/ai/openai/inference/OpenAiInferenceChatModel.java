@@ -427,6 +427,8 @@ public class OpenAiInferenceChatModel implements ChatModel {
 			if (StringUtils.hasText(reasoningContent)) {
 				textContent = reasoningContent;
 				metadata.put("type", MsgMetadataType.THINK);
+			}else {
+				metadata.put("type", MsgMetadataType.TEXT);
 			}
 		}
 
