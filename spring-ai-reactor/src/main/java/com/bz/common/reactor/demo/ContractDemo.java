@@ -13,9 +13,9 @@ public class ContractDemo {
     public static void main(String[] args) {
         Flux.just(1, 3, 4)
                 .concatWith(Flux.just(4, 5, 6, 7, 8))
-                .map(item ->  item*2)
-                .filter(item -> item > 14)
-                .log()
+//                .map(item ->  item*2)
+//                .filter(item -> item > 14)
+//                .log()
                 .subscribe(System.out::println);
 
     }

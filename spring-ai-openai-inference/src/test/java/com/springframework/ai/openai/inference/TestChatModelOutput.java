@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.reactivestreams.Subscription;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.DefaultToolExecutionEligibilityPredicate;
@@ -14,6 +15,8 @@ import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.openai.inference.OpenAiInferenceChatModel;
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
 import org.springframework.retry.support.RetryTemplate;
+import reactor.core.publisher.BaseSubscriber;
+import reactor.core.publisher.GroupedFlux;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,10 +48,7 @@ public class TestChatModelOutput {
                 .maxTokens(1024)
                 .build();
 
-        AtomicBoolean atomicBoolean = new AtomicBoolean(false);
 
-        StringBuilder thinking = new StringBuilder();
-        StringBuilder content = new StringBuilder();
         chatModel.stream(new Prompt("你好你是谁", chatOptions))
                 .filter(chatResponse -> {
                     String text = chatResponse.getResult().getOutput().getText();
@@ -61,7 +61,35 @@ public class TestChatModelOutput {
                     }else {
                         return Msg.builder().text(text).type("text").build();
                     }
-                }).groupBy(Msg::getType);
+                }).groupBy(Msg::getType)
+                .subscribe(new BaseSubscriber<GroupedFlux<String, Msg>>() {
+                    @Override
+                    protected void hookOnSubscribe(Subscription subscription) {
+                        subscription.request(Long.MAX_VALUE);
+                    }
+
+                    @Override
+                    protected void hookOnNext(GroupedFlux<String, Msg> value) {
+                        if (value.key().equals("thinking")){
+                            System.out.println("-------------------------------思考过程-------------------------------");
+                            value.subscribe(item -> {
+                                System.out.print(item.text);
+                            });
+                        }else {
+                            System.out.println();
+                            System.out.println("-------------------------------回答内容-------------------------------");
+                            value.subscribe(item -> {
+                                System.out.print(item.text);
+                            });
+                        }
+
+                    }
+
+                    @Override
+                    protected void hookOnComplete() {
+
+                    }
+                });
 
 //                .subscribe(chatResponse -> {
 //                    String text = chatResponse.getResult().getOutput().getText();
