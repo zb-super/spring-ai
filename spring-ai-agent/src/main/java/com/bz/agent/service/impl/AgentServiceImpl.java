@@ -31,8 +31,6 @@ public class AgentServiceImpl implements AgentService, ApplicationContextAware {
 
     private AgentExecutor agentExecutor = AgentExecutor.ofQwenAgentExecutor();
 
-    private ApplicationContext applicationContext;
-
     @Autowired
     private ToolContextService contextService;
 
@@ -69,6 +67,7 @@ public class AgentServiceImpl implements AgentService, ApplicationContextAware {
             String name = item.getToolDefinition().name();
             return tools.contains(name);
         }).toList().toArray(new ToolCallback[]{});
+
         AgentContext context = AgentContext.builder()
                 .user(user)
                 .chatOptions(chatOptions)
