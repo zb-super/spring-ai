@@ -9,15 +9,11 @@ import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.example.tool.TestUtils;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
-import java.time.Duration;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +28,7 @@ public class TestAgentController {
 
     @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<AgentChatResponse> generation(@RequestParam("userInput") String userInput) {
-        String key = "";
+        String key = "sk-0f38ec133e2c466089d90e7fc18fafcc";
         User user = User.builder()
                 .userInput(userInput)
                 .build();
