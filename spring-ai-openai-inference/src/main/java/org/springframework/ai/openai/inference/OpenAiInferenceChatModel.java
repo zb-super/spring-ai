@@ -290,13 +290,6 @@ public class OpenAiInferenceChatModel implements ChatModel {
 							if (choice.message().role() != null) {
 								roleMap.putIfAbsent(id, choice.message().role().name());
 							}
-//							Map<String, Object> metadata = Map.of(
-//									"id", id,
-//									"role", roleMap.getOrDefault(id, ""),
-//									"index", choice.index(),
-//									"finishReason", choice.finishReason() != null ? choice.finishReason().name() : "",
-//									"refusal", StringUtils.hasText(choice.message().refusal()) ? choice.message().refusal() : "",
-//									"annotations", choice.message().annotations() != null ? choice.message().annotations() : List.of());
 							Map<String, Object> metadata = new HashMap<>();
 							metadata.put("id",id);
 							metadata.put("role",roleMap.getOrDefault(id, ""));
