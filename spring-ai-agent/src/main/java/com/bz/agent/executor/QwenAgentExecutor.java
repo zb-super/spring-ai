@@ -1,6 +1,6 @@
 package com.bz.agent.executor;
 
-import com.bz.agent.model.chat.AgentContext;
+import com.bz.agent.model.agent.AgentContext;
 import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.agent.tool.AgentToolCallingManager;
 import com.bz.agent.tool.DefaultAgentToolCallingManager;
@@ -14,11 +14,13 @@ import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.openai.inference.OpenAiInferenceChatModel;
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.FluxSink;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExecutor {
 
     private final AgentToolCallingManager toolCallingManager = DefaultAgentToolCallingManager.builder().build();

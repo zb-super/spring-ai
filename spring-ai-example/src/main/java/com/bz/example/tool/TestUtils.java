@@ -1,7 +1,10 @@
 package com.bz.example.tool;
 
+import org.springframework.ai.support.ToolCallbacks;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +18,7 @@ import java.util.Map;
  * @author：binzhang
  * @date： 2025/5/11
  */
+@Service
 public class TestUtils {
 
     @Tool(description = "获取当前时间")
@@ -35,4 +39,9 @@ public class TestUtils {
         return Map.of("name","zb","age",12);
     }
 
+    public static void main(String[] args) {
+        ToolCallback[] from = ToolCallbacks.from(new TestUtils());
+        System.out.println();
+
+    }
 }

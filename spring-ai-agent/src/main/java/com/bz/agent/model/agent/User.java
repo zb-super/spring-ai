@@ -1,4 +1,4 @@
-package com.bz.agent.model.chat;
+package com.bz.agent.model.agent;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,10 +15,4 @@ public class User {
      * 用户输入
      */
     private String userInput;
-
-
-    /**
-     * 会话Id
-     */
-    private String sessionId;
 }

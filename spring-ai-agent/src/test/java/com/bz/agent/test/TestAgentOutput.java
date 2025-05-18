@@ -2,9 +2,9 @@ package com.bz.agent.test;
 
 import com.bz.agent.executor.AgentExecutor;
 import com.bz.agent.executor.QwenAgentExecutor;
-import com.bz.agent.model.chat.AgentContext;
-import com.bz.agent.model.chat.AgentOptions;
-import com.bz.agent.model.chat.User;
+import com.bz.agent.model.agent.AgentContext;
+import com.bz.agent.model.agent.AgentOptions;
+import com.bz.agent.model.agent.User;
 import com.bz.agent.test.tool.TestUtils;
 import org.springframework.ai.support.ToolCallbacks;
 

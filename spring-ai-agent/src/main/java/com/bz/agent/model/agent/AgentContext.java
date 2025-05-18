@@ -1,4 +1,4 @@
-package com.bz.agent.model.chat;
+package com.bz.agent.model.agent;
 
 import com.bz.agent.model.KnowledgeBase;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class AgentContext {
     /**
      * 附加属性，供工具使用
      */
-    private final Map<String, Object> attributes = new HashMap<>();
+    private final Map<String, Object> toolContext = new HashMap<>();
 
     /**
      * 聊天记录

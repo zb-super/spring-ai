@@ -1,7 +1,7 @@
 package com.bz.agent.executor;
 
 import com.bz.agent.model.response.AgentChatResponse;
-import com.bz.agent.model.chat.AgentContext;
+import com.bz.agent.model.agent.AgentContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.messages.AbstractMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -24,8 +24,11 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
 
     @Override
     public Flux<AgentChatResponse> chatStream(AgentContext context) {
+        // 模型信息
         ChatOptions chatOptions = buildChatOptions(context);
+        // 构建提示词
         Prompt prompt = buildPrompt(context, chatOptions);
+        // 构建模型
         ChatModel chatModel = buildChatModel(context);
         return Flux.create(fluxSink -> doChatSteam(prompt, chatModel, fluxSink));
     }
@@ -57,6 +60,7 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
                 .temperature(context.getChatOptions().getTemperature())
                 .model(context.getChatOptions().getModel())
                 .maxTokens(context.getChatOptions().getMaxToken())
+                .toolContext(context.getToolContext())
                 .build();
     }
 
@@ -107,12 +111,6 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
         return chatResponse.getResult().getOutput().getText();
     }
 
-    /**
-     * 发送function name
-     * @param index
-     * @param toolName
-     * @param emitter
-     */
     protected void sendFunctionCallName(int index, String toolName, FluxSink<AgentChatResponse> emitter){
         emitter.next(AgentChatResponse.ofToolBeforeResponse(toolName,index));
     }
@@ -129,7 +127,7 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
      */
     protected void sendThinkMsg(int index, ChatResponse chatResponse, FluxSink<AgentChatResponse> emitter){
         String text = chatResponse.getResult().getOutput().getText();
-        if (isTypeContext(chatResponse, MsgMetadataType.THINK)) {
+        if (isTypeContext(chatResponse, MsgMetadataType.THINK) && StringUtils.isNotBlank(text)) {
             emitter.next(AgentChatResponse.ofThinkResponse(text, index));
         }
     }
