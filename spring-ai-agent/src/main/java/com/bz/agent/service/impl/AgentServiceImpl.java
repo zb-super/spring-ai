@@ -39,13 +39,12 @@ public class AgentServiceImpl implements AgentService, ApplicationContextAware {
     @Override
     public Flux<AgentChatResponse> stream(ChatContext chatContext) {
         String questionId = saveMsg(chatContext);
+        String sessionId = chatContext.getSessionId();
         AgentContext agentContext = builderContext(chatContext);
         Flux<AgentChatResponse> agentChatResponseFlux = agentExecutor.chatStream(agentContext)
                 .doOnNext(chat -> {
-
+                    chat.setQuestionId(questionId).setSessionId(sessionId);
                 });
-
-
         return agentChatResponseFlux;
     }
 
