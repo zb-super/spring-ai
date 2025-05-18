@@ -33,7 +33,7 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
 
     private void doChatWithStream(int index, Prompt prompt, ChatModel chatModel, FluxSink<AgentChatResponse> emitter){
         chatModel.stream(prompt)
-                .doOnNext(chatResponse -> sendMsg(index, chatResponse, emitter))
+                .doOnNext(chatResponse -> sendThinkMsg(index, chatResponse, emitter))
                 .collectList()
                 .subscribe(chatResponseList -> {
                     List<ChatResponse> toolList = new ArrayList<>();
@@ -43,7 +43,7 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                     if (!toolList.isEmpty()) {
                         processFunctionCall(toolList, index, prompt, chatModel, emitter);
                     }else {
-                        // 大模型总结的地方
+                        // 大模型总结完
                         emitter.next(AgentChatResponse.ofTextResponse(textBuilder.toString(), index));
                         // 停止符号
                         emitter.next(AgentChatResponse.ofStopResponse(index));
@@ -57,11 +57,13 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                                      ChatModel chatModel,
                                      FluxSink<AgentChatResponse> emitter){
         toolList.forEach(chatResponse -> {
+            // 执行function call
             var toolExecutionResult = toolCallingManager.executeToolCalls(prompt, chatResponse,
                     toolName -> sendFunctionCallName(index, toolName, emitter),
-                    (toolName,result) ->{},
-                    (toolName,ex) -> {}
-            );
+                    (toolName,result) -> {},
+                    (toolName,ex) -> sendFunctionError(index, toolName, ex, emitter));
+
+            // 直接返回给前端
             if (toolExecutionResult.returnDirect()) {
                 List<Generation> generations = ToolExecutionResult.buildGenerations(toolExecutionResult);
                 for (Generation generation : generations) {
@@ -77,64 +79,12 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
         });
     }
 
-    private void processChatResponse(List<ChatResponse> toolList, StringBuilder thinkBuilder, StringBuilder textBuilder, List<ChatResponse> chatResponseList){
-        for (ChatResponse chatResponse : chatResponseList) {
-            if (chatResponse.hasToolCalls()){
-                toolList.add(chatResponse);
-                continue;
-            }
-            if (isBlank(chatResponse)){
-                continue;
-            }
-            if (isThinkContext(chatResponse)){
-                thinkBuilder.append(getContent(chatResponse));
-            }else if (isTextContext(chatResponse)){
-                textBuilder.append(getContent(chatResponse));
-            }
-        }
-    }
-
-    private void sendMsg(int index, ChatResponse chatResponse, FluxSink<AgentChatResponse> emitter){
-        Map<String, Object> metadata = chatResponse.getResult().getOutput().getMetadata();
-        String text = chatResponse.getResult().getOutput().getText();
-        Object type = metadata.get("type");
-        if (type.equals(MsgMetadataType.THINK)) {
-            emitter.next(AgentChatResponse.ofThinkResponse(text, index));
-        }
-    }
-
-    private void sendFunctionCallName(int index, String toolName, FluxSink<AgentChatResponse> emitter){
-        emitter.next(AgentChatResponse.ofToolBeforeResponse(toolName,index));
-    }
-
-    private boolean isBlank(ChatResponse chatResponse){
-        String text = chatResponse.getResult().getOutput().getText();
-        return StringUtils.isBlank(text);
-    }
-
-    private boolean isThinkContext(ChatResponse chatResponse){
-        Map<String, Object> metadata = chatResponse.getResult().getOutput().getMetadata();
-        Object type = metadata.get("type");
-        return type.equals(MsgMetadataType.THINK);
-    }
-
-    private boolean isTextContext(ChatResponse chatResponse){
-        Map<String, Object> metadata = chatResponse.getResult().getOutput().getMetadata();
-        Object type = metadata.get("type");
-        return type.equals(MsgMetadataType.TEXT);
-    }
-
-    public String getContent(ChatResponse chatResponse){
-        return chatResponse.getResult().getOutput().getText();
-    }
-
     @Override
     protected ChatModel buildChatModel(ChatContext context){
         OpenAiInferenceApi openAiApi = OpenAiInferenceApi.builder()
                 .apiKey(context.getChatOptions().getApiKey())
                 .baseUrl(context.getChatOptions().getBaseUrl())
                 .build();
-
         return OpenAiInferenceChatModel.builder()
                 .openAiApi(openAiApi)
                 .toolCallingManager(toolCallingManager)
