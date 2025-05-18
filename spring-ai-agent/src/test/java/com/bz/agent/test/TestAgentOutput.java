@@ -2,21 +2,11 @@ package com.bz.agent.test;
 
 import com.bz.agent.executor.AgentExecutor;
 import com.bz.agent.executor.QwenAgentExecutor;
-import com.bz.agent.model.chat.ChatContext;
-import com.bz.agent.model.chat.ChatOptions;
+import com.bz.agent.model.chat.AgentContext;
+import com.bz.agent.model.chat.AgentOptions;
 import com.bz.agent.model.chat.User;
-import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.agent.test.tool.TestUtils;
-import org.reactivestreams.Subscription;
-import org.springframework.ai.model.tool.ToolCallingChatOptions;
-import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
 import org.springframework.ai.support.ToolCallbacks;
-import org.springframework.ai.tool.ToolCallback;
-import reactor.core.publisher.BaseSubscriber;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.GroupedFlux;
-import reactor.core.publisher.SignalType;
-import reactor.util.context.Context;
 
 
 import java.io.IOException;
@@ -29,7 +19,7 @@ public class TestAgentOutput {
                 .userInput("今天天气怎么样？")
                 .build();
 
-        ChatOptions chatOptions = ChatOptions.builder()
+        AgentOptions chatOptions = AgentOptions.builder()
                 .apiKey(key)
                 .baseUrl("https://dashscope.aliyuncs.com/compatible-mode")
                 .model("qwq-plus")
@@ -37,7 +27,7 @@ public class TestAgentOutput {
                 .build();
 
         AgentExecutor agentExecutor = new QwenAgentExecutor();
-        ChatContext context = ChatContext.builder()
+        AgentContext context = AgentContext.builder()
                 .user(user)
                 .chatOptions(chatOptions)
                 .prompt("你是一个智能助手。")

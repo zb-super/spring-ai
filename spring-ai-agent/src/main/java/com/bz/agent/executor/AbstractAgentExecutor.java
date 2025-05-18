@@ -1,7 +1,7 @@
 package com.bz.agent.executor;
 
 import com.bz.agent.model.response.AgentChatResponse;
-import com.bz.agent.model.chat.ChatContext;
+import com.bz.agent.model.chat.AgentContext;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.messages.AbstractMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -23,7 +23,7 @@ import java.util.Map;
 public abstract class AbstractAgentExecutor implements AgentExecutor {
 
     @Override
-    public Flux<AgentChatResponse> chatStream(ChatContext context) {
+    public Flux<AgentChatResponse> chatStream(AgentContext context) {
         ChatOptions chatOptions = buildChatOptions(context);
         Prompt prompt = buildPrompt(context, chatOptions);
         ChatModel chatModel = buildChatModel(context);
@@ -35,7 +35,7 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
      * @param context
      * @return
      */
-    protected abstract ChatModel buildChatModel(ChatContext context);
+    protected abstract ChatModel buildChatModel(AgentContext context);
 
     /**
      * 逻辑
@@ -50,7 +50,7 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
      * @param context
      * @return
      */
-    protected ChatOptions buildChatOptions(ChatContext context){
+    protected ChatOptions buildChatOptions(AgentContext context){
         return ToolCallingChatOptions.builder()
                 .toolCallbacks(context.getCallbacks())
                 .internalToolExecutionEnabled(false)
@@ -66,7 +66,7 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
      * @param chatOptions
      * @return
      */
-    protected Prompt buildPrompt(ChatContext context, ChatOptions chatOptions){
+    protected Prompt buildPrompt(AgentContext context, ChatOptions chatOptions){
         String userInput = context.getUser().getUserInput();
         // 最新内容消息
         List<AbstractMessage> abstractMessages = List.of(new SystemMessage(context.getPrompt()), new UserMessage(userInput));

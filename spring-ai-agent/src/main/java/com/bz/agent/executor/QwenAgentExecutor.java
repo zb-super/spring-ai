@@ -1,11 +1,10 @@
 package com.bz.agent.executor;
 
-import com.bz.agent.model.chat.ChatContext;
+import com.bz.agent.model.chat.AgentContext;
 import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.agent.tool.AgentToolCallingManager;
 import com.bz.agent.tool.DefaultAgentToolCallingManager;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
@@ -14,13 +13,11 @@ import org.springframework.ai.model.tool.DefaultToolExecutionEligibilityPredicat
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.openai.inference.OpenAiInferenceChatModel;
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
-import org.springframework.ai.openai.inference.metadata.MsgMetadataType;
 import org.springframework.retry.support.RetryTemplate;
 import reactor.core.publisher.FluxSink;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExecutor {
 
@@ -80,7 +77,7 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
     }
 
     @Override
-    protected ChatModel buildChatModel(ChatContext context){
+    protected ChatModel buildChatModel(AgentContext context){
         OpenAiInferenceApi openAiApi = OpenAiInferenceApi.builder()
                 .apiKey(context.getChatOptions().getApiKey())
                 .baseUrl(context.getChatOptions().getBaseUrl())

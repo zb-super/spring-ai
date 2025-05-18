@@ -1,6 +1,6 @@
 package com.bz.agent.executor;
 
-import com.bz.agent.model.chat.ChatContext;
+import com.bz.agent.model.chat.AgentContext;
 import com.bz.agent.model.response.AgentChatResponse;
 import reactor.core.publisher.Flux;
 
@@ -11,5 +11,5 @@ public interface AgentExecutor {
      * @param context 聊天上下文
      * @return
      */
-    public Flux<AgentChatResponse> chatStream(ChatContext context);
+    public Flux<AgentChatResponse> chatStream(AgentContext context);
 }

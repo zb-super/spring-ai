@@ -2,8 +2,8 @@ package com.bz.example.controller;
 
 import com.bz.agent.executor.AgentExecutor;
 import com.bz.agent.executor.QwenAgentExecutor;
-import com.bz.agent.model.chat.ChatContext;
-import com.bz.agent.model.chat.ChatOptions;
+import com.bz.agent.model.chat.AgentContext;
+import com.bz.agent.model.chat.AgentOptions;
 import com.bz.agent.model.chat.User;
 import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.example.tool.TestUtils;
@@ -33,15 +33,16 @@ public class TestAgentController {
                 .userInput(userInput)
                 .build();
 
-        ChatOptions chatOptions = ChatOptions.builder()
+        AgentOptions chatOptions = AgentOptions.builder()
                 .apiKey(key)
                 .baseUrl("https://dashscope.aliyuncs.com/compatible-mode")
                 .model("qwq-plus")
                 .maxToken(1024)
                 .build();
 
-        AgentExecutor agentExecutor = new QwenAgentExecutor();
-        ChatContext context = ChatContext.builder()
+
+
+        AgentContext context = AgentContext.builder()
                 .user(user)
                 .chatOptions(chatOptions)
                 .prompt("你是一个智能助手。")
@@ -50,6 +51,7 @@ public class TestAgentController {
                 .callbacks(ToolCallbacks.from(new TestUtils()))
                 .build();
 
+        AgentExecutor agentExecutor = new QwenAgentExecutor();
         return agentExecutor.chatStream(context)
                 .filter(item -> item.getData() != null);
     }

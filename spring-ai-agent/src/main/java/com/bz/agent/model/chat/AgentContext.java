@@ -16,7 +16,7 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatContext {
+public class AgentContext {
 
     /**
      * 用户输入的信息
@@ -36,7 +36,7 @@ public class ChatContext {
     /**
      * 聊天选项
      */
-    private ChatOptions chatOptions;
+    private AgentOptions chatOptions;
 
     /**
      * 提示词

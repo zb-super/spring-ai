@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ChatOptions {
+public class AgentOptions {
 
     private String model;
 
