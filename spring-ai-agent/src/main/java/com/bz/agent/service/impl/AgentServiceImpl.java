@@ -10,10 +10,7 @@ import com.bz.agent.service.AgentService;
 import com.bz.agent.tool.ToolContextService;
 import org.springframework.ai.support.ToolCallbacks;
 import org.springframework.ai.tool.ToolCallback;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -27,7 +24,7 @@ import java.util.*;
  * @date： 2025/5/18
  */
 @Service
-public class AgentServiceImpl implements AgentService, ApplicationContextAware {
+public class AgentServiceImpl implements AgentService {
 
     private AgentExecutor agentExecutor = AgentExecutor.ofQwenAgentExecutor();
 
@@ -78,11 +75,6 @@ public class AgentServiceImpl implements AgentService, ApplicationContextAware {
                 .build();
 
         return context;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     private String saveMsg(ChatContext chatContext){
