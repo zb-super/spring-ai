@@ -13,6 +13,10 @@ public class StopChatResponse implements AgentChatResponse{
 
     private Integer index;
 
+    private String sessionId;
+
+    private String questionId;
+
     @Override
     public Type getType() {
         return Type.STOP;
@@ -21,5 +25,15 @@ public class StopChatResponse implements AgentChatResponse{
     @Override
     public Object getData() {
         return null;
+    }
+
+    public AgentChatResponse setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+        return this;
+    }
+
+    public AgentChatResponse setQuestionId(String questionId) {
+        this.questionId = questionId;
+        return this;
     }
 }

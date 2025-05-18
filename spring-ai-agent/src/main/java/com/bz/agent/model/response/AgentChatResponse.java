@@ -8,32 +8,36 @@ public interface AgentChatResponse {
 
     public Object getData();
 
+    public AgentChatResponse setSessionId(String sessionId);
+
+    public AgentChatResponse setQuestionId(String questionId);
+
     static AgentChatResponse ofThinkResponse(Object data, Integer index){
-        return new ThinkChatResponse(data, index);
+        return new ThinkChatResponse(data, index, null, null);
     }
 
     static AgentChatResponse ofToolBeforeResponse(Object data, Integer index){
-        return new ToolBeforeChatResponse(data, index);
+        return new ToolBeforeChatResponse(data, index, null, null);
     }
 
     static AgentChatResponse ofToolResultChatResponse(Object data, Integer index){
-        return new ToolResultChatResponse(data, index);
+        return new ToolResultChatResponse(data, index, null, null);
     }
 
     static AgentChatResponse ofTextResponse(Object data, Integer index){
-        return new TextChatResponse(data, index);
+        return new TextChatResponse(data, index, null, null);
     }
 
     static AgentChatResponse ofErrorResponse(Object data, Integer index){
-        return new ExceptionChatResponse(data, index);
+        return new ExceptionChatResponse(data, index,null, null);
     }
 
     static AgentChatResponse ofDelimiterResponse(Integer index){
-        return new DelimiterChatResponse(index);
+        return new DelimiterChatResponse(index,null, null);
     }
 
     static AgentChatResponse ofStopResponse(Integer index){
-        return new StopChatResponse(index);
+        return new StopChatResponse(index,null, null);
     }
 
     enum Type {
