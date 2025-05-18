@@ -2,6 +2,7 @@ package com.bz.agent.executor;
 
 import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.agent.model.agent.AgentContext;
+import com.bz.agent.tool.DefaultAgentToolCallingManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.messages.AbstractMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -12,6 +13,7 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.ToolCallingChatOptions;
+import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.openai.inference.metadata.MsgMetadataType;
 import org.springframework.ai.tool.execution.ToolExecutionException;
 import reactor.core.publisher.Flux;
@@ -22,15 +24,24 @@ import java.util.Map;
 
 public abstract class AbstractAgentExecutor implements AgentExecutor {
 
+    protected DefaultAgentToolCallingManager callingManager;
+
     @Override
-    public Flux<AgentChatResponse> chatStream(AgentContext context) {
-        // 模型信息
-        ChatOptions chatOptions = buildChatOptions(context);
-        // 构建提示词
-        Prompt prompt = buildPrompt(context, chatOptions);
-        // 构建模型
-        ChatModel chatModel = buildChatModel(context);
-        return Flux.create(fluxSink -> doChatSteam(prompt, chatModel, fluxSink));
+    public Flux<AgentChatResponse> chatStream(AgentContext agentContext) {
+        return Flux.create(fluxSink -> {
+            // 模型信息
+            ChatOptions chatOptions = buildChatOptions(agentContext);
+            // 构建提示词
+            Prompt prompt = buildPrompt(agentContext, chatOptions);
+            // 构建模型
+            callingManager = DefaultAgentToolCallingManager.builder().build();
+            ChatModel chatModel = buildChatModel(agentContext, callingManager);
+            ExecutorContext context = ExecutorContext.builder()
+                    .prompt(prompt)
+                    .chatModel(chatModel)
+                    .build();
+            doChatSteam(context, fluxSink);
+        });
     }
 
     /**
@@ -38,15 +49,14 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
      * @param context
      * @return
      */
-    protected abstract ChatModel buildChatModel(AgentContext context);
+    protected abstract ChatModel buildChatModel(AgentContext context, ToolCallingManager callingManager);
 
     /**
      * 逻辑
-     * @param prompt
-     * @param chatModel
+     * @param context
      * @param emitter
      */
-    protected abstract void doChatSteam(Prompt prompt, ChatModel chatModel, FluxSink<AgentChatResponse> emitter);
+    protected abstract void doChatSteam(ExecutorContext context, FluxSink<AgentChatResponse> emitter);
 
     /**
      * 构建聊天信息
