@@ -6,13 +6,16 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class StopChatResponse implements AgentChatResponse{
 
 //    private Object data;
 
+    private Integer index;
+
     @Override
     public Type getType() {
-        return null;
+        return Type.STOP;
     }
 
     @Override

@@ -18,6 +18,8 @@ public class TextChatResponse implements AgentChatResponse{
 
     private Object data;
 
+    private Integer index;
+
     @Override
     public Type getType() {
         return Type.TEXT;

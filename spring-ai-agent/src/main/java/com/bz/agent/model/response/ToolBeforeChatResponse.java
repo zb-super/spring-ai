@@ -11,9 +11,10 @@ public class ToolBeforeChatResponse implements AgentChatResponse{
 
     private Object data;
 
+    private Integer index;
 
     @Override
     public Type getType() {
-        return Type.ERROR;
+        return Type.TOOL_BEFORE;
     }
 }

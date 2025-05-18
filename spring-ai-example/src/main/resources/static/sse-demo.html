@@ -19,6 +19,16 @@
             padding: 2px 4px;
             border-radius: 3px;
         }
+        .tool-before {
+            background-color: #7ac782; /* 淡绿色背景 */
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .text-message {
+            background-color: #ece469; /* 淡绿色背景 */
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
         #status {
             text-align: center;
             color: #666;
@@ -127,7 +137,6 @@
             try {
                 var msg = JSON.parse(event.data);
                 let messageHtml = '';
-
                 if (preMsg == null) {
                     messageHtml = msg.data;
                 } else if (preMsg.type != msg.type) {
@@ -136,8 +145,17 @@
                     messageHtml = msg.data;
                 }
 
+                let spanClass = '';
+                if (msg.type === 'THINK') {
+                    spanClass = 'think-message';
+                    messageHtml = messageHtml;
+                } else if (msg.type === 'TOOL_BEFORE') {
+                    spanClass = 'tool-before';
+                }else if (msg.type === 'TEXT'){
+                    spanClass = 'text-message';
+                }
+
                 // 添加样式类
-                const spanClass = msg.type === 'THINK' ? 'think-message' : '';
                 messagesDiv.innerHTML += `<span class="${spanClass}">${messageHtml}</span>`;
 
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;

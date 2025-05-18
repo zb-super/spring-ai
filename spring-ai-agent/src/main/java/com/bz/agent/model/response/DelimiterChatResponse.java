@@ -6,9 +6,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class DelimiterChatResponse implements AgentChatResponse {
 
 //    private Object data;
+
+    private Integer index;
 
     @Override
     public Type getType() {

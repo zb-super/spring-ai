@@ -4,30 +4,36 @@ public interface AgentChatResponse {
 
     Type getType();
 
+    Integer getIndex();
+
     public Object getData();
 
-    static AgentChatResponse ofThinkResponse(Object data){
-        return new ThinkChatResponse(data);
+    static AgentChatResponse ofThinkResponse(Object data, Integer index){
+        return new ThinkChatResponse(data, index);
     }
 
-    static AgentChatResponse ofToolBeforeResponse(Object data){
-        return new ToolBeforeChatResponse(data);
+    static AgentChatResponse ofToolBeforeResponse(Object data, Integer index){
+        return new ToolBeforeChatResponse(data, index);
     }
 
-    static AgentChatResponse ofTextResponse(Object data){
-        return new TextChatResponse(data);
+    static AgentChatResponse ofToolResultChatResponse(Object data, Integer index){
+        return new ToolResultChatResponse(data, index);
     }
 
-    static AgentChatResponse ofErrorResponse(Object data){
-        return new ExceptionChatResponse(data);
+    static AgentChatResponse ofTextResponse(Object data, Integer index){
+        return new TextChatResponse(data, index);
     }
 
-    static AgentChatResponse ofDelimiterResponse(){
-        return new DelimiterChatResponse();
+    static AgentChatResponse ofErrorResponse(Object data, Integer index){
+        return new ExceptionChatResponse(data, index);
     }
 
-    static AgentChatResponse ofStopResponse(){
-        return new StopChatResponse();
+    static AgentChatResponse ofDelimiterResponse(Integer index){
+        return new DelimiterChatResponse(index);
+    }
+
+    static AgentChatResponse ofStopResponse(Integer index){
+        return new StopChatResponse(index);
     }
 
     enum Type {

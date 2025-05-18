@@ -18,6 +18,8 @@ public class ExceptionChatResponse implements AgentChatResponse{
 
     private Object data;
 
+    private Integer index;
+
     @Override
     public Type getType() {
         return Type.ERROR;

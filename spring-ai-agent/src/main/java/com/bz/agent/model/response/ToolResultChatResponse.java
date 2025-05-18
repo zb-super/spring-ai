@@ -11,6 +11,7 @@ public class ToolResultChatResponse implements AgentChatResponse{
 
     private Object data;
 
+    private Integer index;
 
     @Override
     public Type getType() {
