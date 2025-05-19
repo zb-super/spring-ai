@@ -15,4 +15,13 @@ public class User {
      * 用户输入
      */
     private String userInput;
+
+
+    private String sessionId;
+
+
+    public String botId;
+
+
+    private String questionId;
 }

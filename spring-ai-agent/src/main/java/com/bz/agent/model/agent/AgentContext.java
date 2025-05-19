@@ -1,6 +1,6 @@
 package com.bz.agent.model.agent;
 
-import com.bz.agent.model.KnowledgeBase;
+import com.bz.agent.model.kb.KnowledgeBaseMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,7 +46,7 @@ public class AgentContext {
     /**
      * 知识库
      */
-    private List<KnowledgeBase> knowledgeBases;
+    private List<KnowledgeBaseMetadata> knowledgeBases;
 
     /**
      * 工具

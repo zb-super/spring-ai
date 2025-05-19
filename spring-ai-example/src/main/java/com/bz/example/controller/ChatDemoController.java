@@ -33,7 +33,7 @@ public class ChatDemoController {
 
 
     public ChatDemoController(ChatClient.Builder chatClientBuilder, OpenAiChatModel chatModel) {
-        this.chatClient = chatClientBuilder.build();
+        this.chatClient = chatClientBuilder.defaultAdvisors().build();
         this.chatModel = chatModel;
     }
 

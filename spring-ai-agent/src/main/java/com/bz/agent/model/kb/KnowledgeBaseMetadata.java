@@ -1,4 +1,4 @@
-package com.bz.agent.model;
+package com.bz.agent.model.kb;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class KnowledgeBase {
+public class KnowledgeBaseMetadata {
 
     private Long id;
 
