@@ -35,7 +35,7 @@ public class ExecutorContext {
     }
 
     public ExecutorContext setPrompt(List<Message> messages){
-        this.prompt = new Prompt(messages);
+        this.prompt = new Prompt(messages, prompt.getOptions());
         return this;
     }
 }
