@@ -37,9 +37,10 @@ public class AgentServiceImpl implements AgentService {
         String sessionId = chatContext.getSessionId();
         AgentContext agentContext = builderContext(chatContext);
         Flux<AgentChatResponse> agentChatResponseFlux = agentExecutor.chatStream(agentContext)
-                .doOnNext(chat -> {
-                    chat.setQuestionId(questionId).setSessionId(sessionId);
-                });
+                .doOnNext(chat ->
+                    chat.setQuestionId(questionId)
+                            .setSessionId(sessionId)
+                );
         return agentChatResponseFlux;
     }
 

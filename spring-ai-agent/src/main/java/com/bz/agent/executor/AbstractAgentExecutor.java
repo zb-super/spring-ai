@@ -2,7 +2,6 @@ package com.bz.agent.executor;
 
 import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.agent.model.agent.AgentContext;
-import com.bz.agent.tool.DefaultAgentToolCallingManager;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.ai.chat.messages.AbstractMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -24,7 +23,7 @@ import java.util.Map;
 
 public abstract class AbstractAgentExecutor implements AgentExecutor {
 
-    protected DefaultAgentToolCallingManager callingManager;
+    protected ToolCallingManager toolCallingManager;
 
     @Override
     public Flux<AgentChatResponse> chatStream(AgentContext agentContext) {
@@ -33,13 +32,16 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
             ChatOptions chatOptions = buildChatOptions(agentContext);
             // 构建提示词
             Prompt prompt = buildPrompt(agentContext, chatOptions);
+            // 构建执行器
+            toolCallingManager = buildToolCallingManager(agentContext, fluxSink);
             // 构建模型
-            callingManager = DefaultAgentToolCallingManager.builder().build();
-            ChatModel chatModel = buildChatModel(agentContext, callingManager);
+            ChatModel chatModel = buildChatModel(agentContext, toolCallingManager);
+
             ExecutorContext context = ExecutorContext.builder()
                     .prompt(prompt)
                     .chatModel(chatModel)
                     .build();
+
             doChatSteam(context, fluxSink);
         });
     }
@@ -57,6 +59,14 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
      * @param emitter
      */
     protected abstract void doChatSteam(ExecutorContext context, FluxSink<AgentChatResponse> emitter);
+
+
+    /**
+     * 构建执行器
+     * @param agentContext
+     * @return
+     */
+    protected abstract ToolCallingManager buildToolCallingManager(AgentContext agentContext, FluxSink<AgentChatResponse> emitter);
 
     /**
      * 构建聊天信息
@@ -121,14 +131,6 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
         return chatResponse.getResult().getOutput().getText();
     }
 
-    protected void sendFunctionCallName(int index, String toolName, FluxSink<AgentChatResponse> emitter){
-        emitter.next(AgentChatResponse.ofToolBeforeResponse(toolName,index));
-    }
-
-    protected void sendFunctionError(int index, String toolName, ToolExecutionException ex, FluxSink<AgentChatResponse> emitter){
-        emitter.next(AgentChatResponse.ofErrorResponse("调用工具出错" + toolName +"错误信息：" + ex.getMessage() +"。", index));
-    }
-
     /**
      * 发送思考内容
      * @param index
@@ -165,5 +167,13 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
                 textBuilder.append(getContentText(chatResponse));
             }
         }
+    }
+
+    protected void sendFunctionCallName(int index, String toolName, FluxSink<AgentChatResponse> emitter){
+        emitter.next(AgentChatResponse.ofToolBeforeResponse(toolName,index));
+    }
+
+    protected void sendFunctionError(int index, String toolName, ToolExecutionException ex, FluxSink<AgentChatResponse> emitter){
+        emitter.next(AgentChatResponse.ofErrorResponse("调用工具出错" + toolName +"错误信息：" + ex.getMessage() +"。", index));
     }
 }

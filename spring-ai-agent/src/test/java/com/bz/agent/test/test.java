@@ -12,7 +12,7 @@ import com.bz.agent.executor.ExecutorContext;
 public class test {
     public static void main(String[] args) {
         ExecutorContext context = new ExecutorContext();
-        int andAdd = context.getAndAdd();
-        System.out.println(andAdd);
+//        int andAdd = context.getAndAdd();
+//        System.out.println(andAdd);
     }
 }

@@ -2,8 +2,6 @@ package com.bz.agent.executor;
 
 import com.bz.agent.model.agent.AgentContext;
 import com.bz.agent.model.response.AgentChatResponse;
-import com.bz.agent.tool.AgentToolCallingManager;
-import com.bz.agent.tool.DefaultAgentToolCallingManager;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
@@ -11,13 +9,15 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.model.tool.DefaultToolExecutionEligibilityPredicate;
 import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.ai.model.tool.ToolExecutionResult;
 import org.springframework.ai.openai.inference.OpenAiInferenceChatModel;
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
+import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
+import org.springframework.ai.tool.observation.ToolCallingObservationContext;
 import org.springframework.retry.support.RetryTemplate;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.FluxSink;
 
 import java.util.ArrayList;
@@ -25,21 +25,22 @@ import java.util.List;
 
 public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExecutor {
 
-//    private final AgentToolCallingManager toolCallingManager = DefaultAgentToolCallingManager.builder().build();
-
     @Override
     protected void doChatSteam(ExecutorContext context, FluxSink<AgentChatResponse> emitter){
-        doChatWithStream(context, emitter);
-    }
-
-    private void doChatWithStream(ExecutorContext context, FluxSink<AgentChatResponse> emitter){
-        context.getChatModel().stream(context.getPrompt())
+        context.getChatModel()
+                .stream(context.getPrompt())
                 .doOnNext(chatResponse -> sendThinkMsg(context.getIndex(), chatResponse, emitter))
                 .collectList()
                 .subscribe(chatResponseList -> {
                     List<ChatResponse> toolList = new ArrayList<>();
                     StringBuilder thinkBuilder = new StringBuilder();
                     StringBuilder textBuilder = new StringBuilder();
+                    // 调用知识库
+
+                    // 调用工具
+
+
+                    //调用工作流
                     processChatResponse(toolList, thinkBuilder, textBuilder, chatResponseList);
                     if (!toolList.isEmpty()) {
                         processFunctionCall(toolList, context, emitter);
@@ -57,8 +58,7 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                                      FluxSink<AgentChatResponse> emitter){
         toolList.forEach(chatResponse -> {
             // 执行function call
-            var toolExecutionResult = super.callingManager.executeToolCalls(context.getPrompt(), chatResponse);
-
+            var toolExecutionResult = super.toolCallingManager.executeToolCalls(context.getPrompt(), chatResponse);
             // 直接返回给前端
             if (toolExecutionResult.returnDirect()) {
                 List<Generation> generations = ToolExecutionResult.buildGenerations(toolExecutionResult);
@@ -71,8 +71,8 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                 // 停止符号
                 emitter.next(AgentChatResponse.ofStopResponse(context.getIndex()));
             }else {
-
-                doChatWithStream(context.addIndex(), emitter);
+                doChatSteam(context.addIndex()
+                        .setPrompt(toolExecutionResult.conversationHistory()), emitter);
             }
         });
     }
@@ -90,5 +90,40 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                 .observationRegistry(ObservationRegistry.create())
                 .toolExecutionEligibilityPredicate(new DefaultToolExecutionEligibilityPredicate())
                 .build();
+    }
+
+    @Override
+    protected ToolCallingManager buildToolCallingManager(AgentContext agentContext, FluxSink<AgentChatResponse> emitter) {
+        ObservationRegistry registry = ObservationRegistry.create();
+        //
+        registry.observationConfig().observationHandler(new ObservationHandler<>() {
+
+            @Override
+            public boolean supportsContext(Observation.Context context) {
+                return context instanceof ToolCallingObservationContext;
+            }
+
+            @Override
+            public void onStart(Observation.Context context) {
+                System.out.println("onStart");
+            }
+
+            @Override
+            public void onError(Observation.Context context) {
+                System.out.println("onError");
+            }
+
+            @Override
+            public void onStop(Observation.Context context) {
+                System.out.println("onStop");
+            }
+        });
+
+        DefaultToolCallingManager callingManager = DefaultToolCallingManager.builder()
+                .observationRegistry(registry)
+                .toolExecutionExceptionProcessor(new DefaultToolExecutionExceptionProcessor(false))
+                .build();
+
+        return callingManager;
     }
 }
