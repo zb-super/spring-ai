@@ -6,13 +6,16 @@ import com.bz.agent.model.response.AgentChatResponse;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
+import org.springframework.ai.chat.messages.AbstractMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
-import org.springframework.ai.model.tool.DefaultToolCallingManager;
-import org.springframework.ai.model.tool.DefaultToolExecutionEligibilityPredicate;
-import org.springframework.ai.model.tool.ToolCallingManager;
-import org.springframework.ai.model.tool.ToolExecutionResult;
+import org.springframework.ai.chat.prompt.ChatOptions;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.model.tool.*;
 import org.springframework.ai.openai.inference.OpenAiInferenceChatModel;
 import org.springframework.ai.openai.inference.api.OpenAiInferenceApi;
 import org.springframework.ai.tool.execution.DefaultToolExecutionExceptionProcessor;
@@ -28,11 +31,11 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
     protected void doChatSteam(ExecutorContext context, FluxSink<AgentChatResponse> emitter){
         context.getChatModel()
                 .stream(context.getPrompt())
-                .doOnNext(chatResponse -> sendThinkMsg(context.getIndex(), chatResponse, emitter))
+                .doOnNext(chatResponse -> AgentExecutorUtils.sendThinkMsg(context.getIndex(), chatResponse, emitter))
                 .collectList()
                 .subscribe(chatResponseList -> {
                     //处理模型返回的结果
-                    ModelResponse modelResponse = processChatResponse(chatResponseList);
+                    ModelResponse modelResponse = AgentExecutorUtils.processChatResponse(chatResponseList);
                     // 1.是否需要执行工具
 
                     // 2.是否需要查询知识库
@@ -41,18 +44,16 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
 
                     // 4.直接返回给模型
 
-
-
                     // 1.是否需要执行工具
-                    if (modelResponse.isNeedExecTool()) {
-                        processFunctionCall(modelResponse.getToolList(), context, emitter);
-                    }else {
-
-                        //4.直接返回给模型
-                        emitter.next(AgentChatResponse.ofTextResponse(modelResponse.toString(), context.getIndex()));
-                        // 停止符号
-                        emitter.next(AgentChatResponse.ofStopResponse(context.getIndex()));
-                    }
+//                    if (modelResponse.isNeedExecTool()) {
+//                        processFunctionCall(modelResponse.getToolList(), context, emitter);
+//                    }else {
+//
+//                        //4.直接返回给模型
+//                        emitter.next(AgentChatResponse.ofTextResponse(modelResponse.toString(), context.getIndex()));
+//                        // 停止符号
+//                        emitter.next(AgentChatResponse.ofStopResponse(context.getIndex()));
+//                    }
                 });
     }
 
@@ -128,5 +129,39 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                 .build();
 
         return callingManager;
+    }
+
+    /**
+     * 构建提示词
+     * @param context
+     * @param chatOptions
+     * @return
+     */
+    @Override
+    protected Prompt buildPrompt(AgentContext context, ChatOptions chatOptions){
+        String userInput = context.getUser().getUserInput();
+        // 最新内容消息
+        List<AbstractMessage> abstractMessages = List.of(new SystemMessage(context.getPrompt()), new UserMessage(userInput));
+        // 历史消息
+        List<Message> historyMessages = context.getMessages();
+        historyMessages.addAll(abstractMessages);
+        return new Prompt(context.getMessages(), chatOptions);
+    }
+
+    /**
+     * 构建聊天信息
+     * @param context
+     * @return
+     */
+    @Override
+    protected ChatOptions buildChatOptions(AgentContext context){
+        return ToolCallingChatOptions.builder()
+                .toolCallbacks(context.getCallbacks())
+                .internalToolExecutionEnabled(false)
+                .temperature(context.getChatOptions().getTemperature())
+                .model(context.getChatOptions().getModel())
+                .maxTokens(context.getChatOptions().getMaxToken())
+                .toolContext(context.getToolContext())
+                .build();
     }
 }
