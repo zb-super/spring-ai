@@ -5,6 +5,8 @@ import com.bz.agent.executor.QwenAgentExecutor;
 import com.bz.agent.model.agent.AgentOptions;
 import com.bz.agent.model.agent.User;
 import com.bz.agent.model.response.AgentChatResponse;
+import com.bz.agent.test.tool.TestUtils;
+import org.springframework.ai.support.ToolCallbacks;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
@@ -17,7 +19,7 @@ import java.util.Arrays;
  * @date： 2025/5/18
  */
 public class test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         AgentOptions chatOptions = AgentOptions.builder()
                 .apiKey("key")
                 .baseUrl("https://dashscope.aliyuncs.com/compatible-mode")
@@ -32,11 +34,9 @@ public class test {
         Flux<AgentChatResponse> agentChatResponseFlux = DefaultAgentChatClient.builder()
                 .chatOptions(chatOptions)
                 .user(user)
-                .toolCallbacks(Arrays.asList())
+                .toolCallbacks(Arrays.stream(ToolCallbacks.from(new TestUtils())).toList())
                 .executorClass(QwenAgentExecutor.class)
                 .prompt("你是一个智能助手。")
-                .knowledgeBaseCallBacks(Arrays.asList())
-                .knowledgeBaseOptions(null)
                 .build()
                 .stream();
 

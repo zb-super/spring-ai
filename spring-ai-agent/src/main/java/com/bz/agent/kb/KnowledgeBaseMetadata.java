@@ -1,4 +1,4 @@
-package com.bz.agent.model.kb;
+package com.bz.agent.kb;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

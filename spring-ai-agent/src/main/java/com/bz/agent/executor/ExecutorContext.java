@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.model.tool.ToolCallingManager;
 
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class ExecutorContext {
     private Prompt prompt;
 
     private ChatModel chatModel;
+
+    private ToolCallingManager toolCallingManager;
 
     public ExecutorContext addIndex(){
         this.index = index + 1 ;

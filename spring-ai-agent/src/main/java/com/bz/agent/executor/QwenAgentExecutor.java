@@ -1,6 +1,7 @@
 package com.bz.agent.executor;
 
 import com.bz.agent.model.agent.AgentContext;
+import com.bz.agent.model.chat.ModelResponse;
 import com.bz.agent.model.response.AgentChatResponse;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
@@ -8,7 +9,6 @@ import io.micrometer.observation.ObservationRegistry;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.model.Generation;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.model.tool.DefaultToolCallingManager;
 import org.springframework.ai.model.tool.DefaultToolExecutionEligibilityPredicate;
 import org.springframework.ai.model.tool.ToolCallingManager;
@@ -20,7 +20,6 @@ import org.springframework.ai.tool.observation.ToolCallingObservationContext;
 import org.springframework.retry.support.RetryTemplate;
 import reactor.core.publisher.FluxSink;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExecutor {
@@ -32,21 +31,25 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                 .doOnNext(chatResponse -> sendThinkMsg(context.getIndex(), chatResponse, emitter))
                 .collectList()
                 .subscribe(chatResponseList -> {
-                    List<ChatResponse> toolList = new ArrayList<>();
-                    StringBuilder thinkBuilder = new StringBuilder();
-                    StringBuilder textBuilder = new StringBuilder();
-                    // 调用知识库
+                    //处理模型返回的结果
+                    ModelResponse modelResponse = processChatResponse(chatResponseList);
+                    // 1.是否需要执行工具
 
-                    // 调用工具
+                    // 2.是否需要查询知识库
+
+                    // 3.是否需要调用工作流
+
+                    // 4.直接返回给模型
 
 
-                    //调用工作流
-                    processChatResponse(toolList, thinkBuilder, textBuilder, chatResponseList);
-                    if (!toolList.isEmpty()) {
-                        processFunctionCall(toolList, context, emitter);
+
+                    // 1.是否需要执行工具
+                    if (modelResponse.isNeedExecTool()) {
+                        processFunctionCall(modelResponse.getToolList(), context, emitter);
                     }else {
-                        // 大模型总结完
-                        emitter.next(AgentChatResponse.ofTextResponse(textBuilder.toString(), context.getIndex()));
+
+                        //4.直接返回给模型
+                        emitter.next(AgentChatResponse.ofTextResponse(modelResponse.toString(), context.getIndex()));
                         // 停止符号
                         emitter.next(AgentChatResponse.ofStopResponse(context.getIndex()));
                     }
@@ -58,7 +61,7 @@ public class QwenAgentExecutor extends AbstractAgentExecutor implements AgentExe
                                      FluxSink<AgentChatResponse> emitter){
         toolList.forEach(chatResponse -> {
             // 执行function call
-            var toolExecutionResult = super.toolCallingManager.executeToolCalls(context.getPrompt(), chatResponse);
+            var toolExecutionResult = context.getToolCallingManager().executeToolCalls(context.getPrompt(), chatResponse);
             // 直接返回给前端
             if (toolExecutionResult.returnDirect()) {
                 List<Generation> generations = ToolExecutionResult.buildGenerations(toolExecutionResult);

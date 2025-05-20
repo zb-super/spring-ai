@@ -66,16 +66,16 @@ public class AgentServiceImpl implements AgentService {
             return tools.contains(name);
         }).toList().toArray(new ToolCallback[]{});
 
-        AgentContext context = AgentContext.builder()
-                .user(user)
-                .chatOptions(chatOptions)
-                .prompt("你是一个智能助手。")
-                .messages(new ArrayList<>())
-                .knowledgeBases(new ArrayList<>())
-                .callbacks(array)
-                .build();
+//        AgentContext context = AgentContext.builder()
+//                .user(user)
+//                .chatOptions(chatOptions)
+//                .prompt("你是一个智能助手。")
+//                .messages(new ArrayList<>())
+//                .knowledgeBases(new ArrayList<>())
+//                .callbacks(array)
+//                .build();
 
-        return context;
+        return null;
     }
 
     private String saveMsg(ChatContext chatContext){

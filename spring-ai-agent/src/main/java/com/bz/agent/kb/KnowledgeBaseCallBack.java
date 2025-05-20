@@ -1,4 +1,4 @@
-package com.bz.agent.model.kb;
+package com.bz.agent.kb;
 
 /**
  * Description

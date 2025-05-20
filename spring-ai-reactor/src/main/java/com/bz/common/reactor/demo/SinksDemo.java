@@ -15,37 +15,32 @@ import java.io.IOException;
 public class SinksDemo {
 
     public static void main(String[] args) {
-//        Sinks.many().replay().
         Sinks.Many<Object> objectMany = Sinks.many().multicast()
                 .onBackpressureBuffer(5);
 
         new Thread(() -> {
-            for (int i = 0; i < 30; i++) {
+            for (int i = 0; i < 5; i++) {
+                objectMany.tryEmitNext(i);
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                objectMany.tryEmitNext(i);
             }
+            objectMany.tryEmitComplete();
         }).start();
 
         Flux<Object> flux = objectMany.asFlux();
-        flux.subscribe(System.out::println);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        flux.subscribe(item ->{
-            System.out.println("v1  " + item);
+        flux.subscribe(item -> {
+            System.out.println(item);
+            System.out.println(Thread.currentThread().getName());
         });
 
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            System.in.read();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 }

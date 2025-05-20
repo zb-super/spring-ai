@@ -1,5 +1,6 @@
 package com.bz.agent.executor;
 
+import com.bz.agent.model.chat.ModelResponse;
 import com.bz.agent.model.response.AgentChatResponse;
 import com.bz.agent.model.agent.AgentContext;
 import org.apache.commons.lang3.StringUtils;
@@ -18,12 +19,16 @@ import org.springframework.ai.tool.execution.ToolExecutionException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractAgentExecutor implements AgentExecutor {
 
-    protected ToolCallingManager toolCallingManager;
+
+    public AbstractAgentExecutor(){
+
+    }
 
     @Override
     public Flux<AgentChatResponse> chatStream(AgentContext agentContext) {
@@ -32,14 +37,17 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
             ChatOptions chatOptions = buildChatOptions(agentContext);
             // 构建提示词
             Prompt prompt = buildPrompt(agentContext, chatOptions);
-            // 构建执行器
-            toolCallingManager = buildToolCallingManager(agentContext, fluxSink);
+            // 工具构建执行器
+            ToolCallingManager toolCallingManager = buildToolCallingManager(agentContext, fluxSink);
+            // 构建知识库执行器
+
             // 构建模型
             ChatModel chatModel = buildChatModel(agentContext, toolCallingManager);
 
             ExecutorContext context = ExecutorContext.builder()
                     .prompt(prompt)
                     .chatModel(chatModel)
+                    .toolCallingManager(toolCallingManager)
                     .build();
 
             doChatSteam(context, fluxSink);
@@ -146,13 +154,13 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
 
     /**
      * 处理聊天内容
-     * @param toolList
-     * @param thinkBuilder
-     * @param textBuilder
      * @param chatResponseList
      */
-    protected void processChatResponse(List<ChatResponse> toolList, StringBuilder thinkBuilder, StringBuilder textBuilder,
-                                     List<ChatResponse> chatResponseList){
+    protected ModelResponse processChatResponse(List<ChatResponse> chatResponseList){
+        List<ChatResponse> toolList = new ArrayList<>();
+        StringBuilder thinkBuilder = new StringBuilder();
+        StringBuilder textBuilder = new StringBuilder();
+
         for (ChatResponse chatResponse : chatResponseList) {
             if (chatResponse.hasToolCalls()){
                 toolList.add(chatResponse);
@@ -167,6 +175,12 @@ public abstract class AbstractAgentExecutor implements AgentExecutor {
                 textBuilder.append(getContentText(chatResponse));
             }
         }
+
+        return ModelResponse.builder()
+                .toolList(toolList)
+                .think(thinkBuilder.toString())
+                .content(textBuilder.toString())
+                .build();
     }
 
     protected void sendFunctionCallName(int index, String toolName, FluxSink<AgentChatResponse> emitter){
