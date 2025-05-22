@@ -1,0 +1,18 @@
+mode:
+  type: Standalone
+
+dataSources:
+  ds_1:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/ds_1
+    username: root
+    password: 123456
+  ds_2:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    jdbcUrl: jdbc:mysql://localhost:3306/ds_2
+    username: root
+    password: 123456
+
+  # 配置其他数据源
