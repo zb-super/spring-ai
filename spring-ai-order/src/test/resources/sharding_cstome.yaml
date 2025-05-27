@@ -1,0 +1,18 @@
+dataSources:
+  driverClassName: com.mysql.jdbc.Driver
+  dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+  produce:
+    ds_0: localhost:3306/ds_1
+    ds_1: localhost:3306/ds_2
+  shadow:
+    ds_2: localhost:3306/ds_3
+    ds_3: localhost:3306/ds_4
+
+sharding:
+  table:
+    order:
+      shardingColumns: order_id
+      shadowColumns: marker
+      tableNumber: 4
+props:
+  sql-show: true

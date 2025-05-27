@@ -1,0 +1,53 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_1?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+  ds_1:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_2?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+  ds_2:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_3?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+  ds_3:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_4?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+
+rules:
+  - !SHARDING
+    tables:
+      t_order:
+        actualDataNodes: ds_${0..1}.t_order_${0..1}
+        databaseStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: hint_class_based_data
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: hint_class_based_table
+    shardingAlgorithms:
+      hint_class_based_data:
+        type: CLASS_BASED
+        props:
+          strategy: STANDARD
+          algorithmClassName: com.bz.order.sharding.stand.DataStandardShardingAlgorithm
+      hint_class_based_table:
+        type: CLASS_BASED
+        props:
+          strategy: STANDARD
+          algorithmClassName: com.bz.order.sharding.stand.TableDataStandardShardingAlgorithm
+
+props:
+  sql-show: true

@@ -1,0 +1,66 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_1?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+  ds_1:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_2?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+  ds_2:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_3?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+  ds_3:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ds_4?useSSL=false&verifyServerCertificate=false
+    username: root
+    password: 123456
+
+  # 配置其他数据源
+rules:
+  - !SHARDING
+    tables:
+      t_order:
+        actualDataNodes: ds_${0..1}.t_order_${0..1}
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: t_order_inline
+      order_item:
+        actualDataNodes: ds_${0..1}.order_item_${0..1}
+        tableStrategy:
+          standard:
+            shardingColumn: order_id
+            shardingAlgorithmName: t_order_item_inline
+    #绑定表
+    bindingTables:
+      - order_item,t_order
+    # 分裤策略
+    defaultDatabaseStrategy:
+      standard:
+        shardingColumn: order_id
+        shardingAlgorithmName: database_inline
+    # 算法
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds_${order_id % 2}
+      t_order_inline:
+        type: INLINE
+        props:
+          algorithm-expression: t_order_${order_id % 2}
+      t_order_item_inline:
+        type: INLINE
+        props:
+          algorithm-expression: order_item_${order_id % 2}
+props:
+  sql-show: true
